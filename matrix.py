@@ -247,18 +247,14 @@ def traiter(liste):
     return mat
 
 # afficher la matrice sur la sortie standard
-def affiche_matrice(liste):
-
-    chaine = ''
+def print_matrix(matrix):
     i = 1
-    for element in liste:
-        chaine += '[ '
+    for element in matrix:
+        string += '[ '
         for key, e in enumerate(element):
-            chaine += str(e) + ' '
+            string += str(e) + ' '
             if key != len(element) - 1:
                 chaine += ', '
-        chaine += ']'
-        if i != len(liste):
-            chaine += '\n'
+        string += ']'
+        print(string)
         i += 1
-    return chaine

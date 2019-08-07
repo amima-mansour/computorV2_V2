@@ -14,14 +14,20 @@ def zero_division():
 def brackets():
     print(colors.red + "ERROR: Brakets" + colors.normal)
 
-def var_name():
-    print(colors.red +  "ERROR: Variable Name" + colors.normal)
+def var_name(string):
+    print(colors.red +  "ERROR: Variable Name\n" + string + " can not be a variable name" + colors.normal)
 
 def operator(c):
-    print(colors.red + "ERROR: Operator" + colors.normal)
+    print(colors.red + "ERROR: Operator "+ c + colors.normal)
+
+def unknown_variable(var):
+    print(colors.red + "ERROR: This variable "+ var + " is not identified!" + colors.normal)
 
 def wrong_element(msg):
     print(colors.red + "This element " + msg + " is not identified!" + colors.normal)
 
 def error_matrix():
     print(colors.red + "This matrix is not well formated!" + colors.normal)
+
+def function_name(string):
+    print(colors.red + "This function name " + string + " is not well formated!" + colors.normal)

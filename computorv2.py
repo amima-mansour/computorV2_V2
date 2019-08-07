@@ -2,9 +2,11 @@
 
 import parsing
 if __name__ == "__main__":
-    chaine = raw_input()
+    #chaine = raw_input()
+    string = input()
     p = parsing.Inputs()
-    while chaine != 'exit':
-        p.parsing(chaine)
-        print(p.matrixs)
-        chaine = raw_input()
+    while string != 'exit':
+        p.parsing(string)
+        print(p.variables)
+        # chaine = raw_input()
+        string = input()

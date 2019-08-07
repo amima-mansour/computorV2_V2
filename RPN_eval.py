@@ -2,9 +2,29 @@
 
 import errors
 
+def eval_complexe_postfix(expr):
+    ops = ['-', '/', '%', '*', '^','+']
+    expr = expr.split()
+    real_stack, img_stack = [], []
+    real_img = 0
+    for element in expr:
+        if element == 'i':
+            real_stack.append(0)
+        else:
+            real_stack.append(element)
+    length = len(expr)
+    for key, element in enumerate(expr):
+        if element in ops:
+            if expr[0] == 'i' and expr[1] = 'i':
+                if element = '+':
+                    img_stack.append(2)
+            elif expr[0] == 'i':
+            elif expr[1] == 'i':
+        
+
+
+
 def eval_postfix(expr):
-    """Resolve an equation took in an RPN form.
-        Takes the expr <list>"""
 
     stack = []
     for token in expr:

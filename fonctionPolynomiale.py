@@ -4,7 +4,7 @@ import calculs
 import re
 import resolutions
 from copy import deepcopy
-import matrice
+import matrix
 
 def calcul(liste, val, inconnu):
     # Cette fonction permet de tester et réorganiser un polynome.

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import re
-import matrice
+import matrix
 from test_nom_de_variable import *
 import fonctionPolynomiale as polynome
 import calculs

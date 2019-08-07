@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import re
-import matrice
+import matrix
 
 def nombre(chaine):
     # Cette fonction permet de tester si une chaine est un nombre et si oui le retourner.
