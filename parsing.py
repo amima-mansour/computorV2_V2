@@ -179,6 +179,7 @@ class Inputs:
         return rpn_eval.eval_postfix(value)
 
     def replace_var(self, expr, ignore):
+        ops = ['+', '-', '/', '%', '*', '^']
         i = 0
         expr = expr.split()
         length = len(expr)
@@ -189,16 +190,19 @@ class Inputs:
                 var = expr[i]
                 if var.lower() == ignore or var.lower() == 'i':
                     final_expr.append(var.lower())
-                    #print(isinstance(expr_final[-2], comp.Complex), expr[-1])
                     if len(final_expr) >= 2 and not isinstance(final_expr[-2], comp.Complex) and final_expr[-2].isdigit():
-                        if (i + 1 < length and expr[i + 1].isdigit()) or i + 1 == length:
+                        if (i + 1 < length and (expr[i + 1] not in ops or (expr[i + 1] == '-' and i == 1))) or i + 1 == length:
                             final_expr += '*'
                 elif var.lower() not in self.variables:
-                    errors.unknown_variable(var)
-                    return None
+                    if var.lower() is in self.functions:
+                        i += 1
+                        final_expr.append(evaluate_func(self.functions[var.lower()][1], expr[i], self.functions[var.lower()][0]))
+                    else:
+                        errors.unknown_variable(var)
+                        return None
                 else:
                     final_expr.append(self.variables[var.lower()])
-                    if len(final_expr) >= 2 and final_expr[-2].isdigit():
+                    if len(final_expr) >= 2 and not isinstance(final_expr[-2], comp.Complex) and final_expr[-2].isdigit():
                         if (i + 1 < length and expr[i + 1].isdigit()) or i + 1 == length:
                             final_expr += '*'
             else:
@@ -206,3 +210,12 @@ class Inputs:
             i += 1
         print("final list = {}".format(final_expr))
         return final_expr
+
+    def evaluate_func(func, var):
+        expr = []
+        for element in func:
+            if element == unknown:
+                expr.append(var)
+            else:
+                expr.append(element)
+        return rpn_eval.eval_postfix(expr)
