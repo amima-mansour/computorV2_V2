@@ -9,10 +9,12 @@ def usage():
 
 def zero_division():
     print(colors.red + "ERROR: Zero Division" + colors.normal)
-    exit()
 
 def brackets():
     print(colors.red + "ERROR: Brakets" + colors.normal)
+
+def syntax():
+    print(colors.red + "ERROR: Syntax" + colors.normal)
 
 def var_name(string):
     print(colors.red +  "ERROR: Variable Name\n" + string + " can not be a variable name" + colors.normal)

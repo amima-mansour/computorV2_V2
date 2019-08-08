@@ -23,8 +23,11 @@ def get_input(inp = None):
     'Inputs an expression and returns list of (TOKENTYPE, tokenvalue)'
 
     inp = " ".join(inp)
+    print(inp)
     tokens = inp.strip().split()
+    print(tokens)
     tokenvals = []
+    i = 0
     for token in tokens:
         if token in ops:
             tokenvals.append((token, ops[token]))
@@ -93,16 +96,17 @@ def shunting(tokenvals):
     return table
  
 if __name__ == '__main__':
-    #infix = '5 + 6 * 3 / A  + A + (10 / 2 * 4) / 10'
-    infix = 'A + A'
+    infix = '5 + 6 * 3 / i + var + (10 / 2 * 4) / 10'
+    #infix = 'A + A'
     if len(av) > 1:
         infix = av[1]
-    print( 'For infix expression: %r\n' % infix )
+    #print( 'For infix expression: %r\n' % infix )
     rp = shunting(infix)
-    maxcolwidths = [len(max(x, key=len)) for x in zip(*rp)]
-    row = rp[0]
-    print( ' '.join('{cell:^{width}}'.format(width=width, cell=cell) for (width, cell) in zip(maxcolwidths, row)))
-    for row in rp[1:]:
-        print( ' '.join('{cell:<{width}}'.format(width=width, cell=cell) for (width, cell) in zip(maxcolwidths, row)))
+    #maxcolwidths = [len(max(x, key=len)) for x in zip(*rp)]
+    #row = rp[0]
+    #print( ' '.join('{cell:^{width}}'.format(width=width, cell=cell) for (width, cell) in zip(maxcolwidths, row)))
+    #for row in rp[1:]:
+    #    print( ' '.join('{cell:<{width}}'.format(width=width, cell=cell) for (width, cell) in zip(maxcolwidths, row)))
 
-    print('\n The final output RPN is: %r' % rp[-1][2])
+    print('The infix output RPN is: %r' % infix)
+    print('The final output RPN is: %r' % rp[-1][2])

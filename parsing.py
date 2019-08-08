@@ -2,7 +2,9 @@
 
 import errors
 import RPN as rpn
+import RPN_Eval as rpn_eval
 import matrix
+import Complex as comp
 
 def brackets(s, pushChar, popChar):
     'The function below checks if parentheses are correctly closed'
@@ -21,7 +23,7 @@ def brackets(s, pushChar, popChar):
 def check_string(string):
 
     l = []
-    ops = ['+', '-', '/', '%', '*', '^', ')', '(','+']
+    ops = ['+', '-', '/', '%', '*', '^', ')', '(']
     ops_2 = ['+', '-', '/', '%', '*', '^','+']
     if not brackets(string, '(', ')'):
         return False, []
@@ -34,6 +36,15 @@ def check_string(string):
             while i < length and string[i].isdigit():
                 nb += string[i]
                 i+= 1
+            if i < length and string[i] == '.':
+                nb += '.'
+                i += 1
+                if i == length or not string[i].isdigit():
+                    errors.syntax()
+                    return False, l
+                while i < length and string[i].isdigit():
+                    nb += string[i]
+                    i+= 1
             l.append(nb)
             i -= 1
         elif string[i] in ops:
@@ -93,7 +104,7 @@ class Inputs:
                 matrix.print_matrix()
             else:
                 self.variables[var_name.lower()] = self.check_expr(var_value, "")
-                print(self.variables[var_name.lower()])
+                print("real = {}\nimg = {}".format(self.variables[var_name.lower()].x, self.variables[var_name.lower()].y))
         elif '(' in var_name:
             if var_name.count(')') != 1 or var_name.count(')') != 1:
                 errors.function_name(var_name)
@@ -165,27 +176,33 @@ class Inputs:
             return value
         rp = rpn.shunting(var_list)
         value = self.replace_var(rp[-1][2], ignore)
-        return value
+        return rpn_eval.eval_postfix(value)
 
     def replace_var(self, expr, ignore):
         i = 0
+        expr = expr.split()
         length = len(expr)
-        final_expr = ""
+        final_expr = []
+        print("expr replace = {}".format(expr))
         while i < length:
             if expr[i].isalpha():
-                var = ""
-                while i < length and expr[i].isalpha():
-                    var += expr[i]
-                    i += 1
-                print(len(ignore))
+                var = expr[i]
                 if var.lower() == ignore or var.lower() == 'i':
-                    final_expr += var.lower()
+                    final_expr.append(var.lower())
+                    #print(isinstance(expr_final[-2], comp.Complex), expr[-1])
+                    if len(final_expr) >= 2 and not isinstance(final_expr[-2], comp.Complex) and final_expr[-2].isdigit():
+                        if (i + 1 < length and expr[i + 1].isdigit()) or i + 1 == length:
+                            final_expr += '*'
                 elif var.lower() not in self.variables:
                     errors.unknown_variable(var)
                     return None
                 else:
-                    final_expr += self.variables[var.lower()]
+                    final_expr.append(self.variables[var.lower()])
+                    if len(final_expr) >= 2 and final_expr[-2].isdigit():
+                        if (i + 1 < length and expr[i + 1].isdigit()) or i + 1 == length:
+                            final_expr += '*'
             else:
-                final_expr += expr[i]
-                i += 1
+                final_expr.append(expr[i])
+            i += 1
+        print("final list = {}".format(final_expr))
         return final_expr
