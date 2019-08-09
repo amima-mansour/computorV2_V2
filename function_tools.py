@@ -70,7 +70,6 @@ def clean_function_list(init_list, final_list, index, unknown):
     if index < len(init_list) and init_list[index] in '+-':
         final_list.append(init_list[index])
         index += 1
-    index += 1
     return index
 
 # clean a double list
@@ -108,6 +107,7 @@ def clean_function(init_list, unknown):
 # simplify function expression : for example 2 * x^2 + 1 + 2 * x + 5 - 2 * x^2 = 2 * x + 6
 def simplify_func(func_expr, unknown):
 
+    print("simplify = {}".format(func_expr))
     expr = func_expr
     dic, final_expr = {}, []
     index, dic[0] = 0, 0
@@ -115,6 +115,8 @@ def simplify_func(func_expr, unknown):
         if isinstance(expr[index], list) and unknown in expr[index]:
             if index - 1 >= 0 and expr[index - 1] == '-':
                 final_expr.append('-')
+            if len(final_expr) > 0 and final_expr[-1] != '-':
+                final_expr.append('+')
             if index - 2 >= 0 and expr[index - 1] == '*':
                 final_expr.extend(expr[index-2:index])
                 del expr[index -2:index]
@@ -137,12 +139,11 @@ def simplify_func(func_expr, unknown):
                     dic[degree] = coeff * calcul.convert_str_nbr(nbr)
                 else:
                     dic[degree] = nbr
-            print(dic[degree])
         else:
             index += 1
     tmp = degree_null(expr, unknown)
     if tmp == 'null': return []
-    if isinstance(tmp, list):
+    if 0 not in dic:
         dic[0] = tmp
     else:
         dic[0] += tmp
@@ -209,25 +210,23 @@ def elements_polynome(expr, index):
 def final_function(dic, unknown, final_list):
 
     i = 0
-    print("final_list = {} dic = {}".format(final_list, dic))
+    print(dic)
+    tmp_list = []
     while len(dic) != 0 :
         if i in dic.keys():
-            tmp_list = []
+            print(i)
             if i == 0 and len(final_list) != 0:
                 tmp_list = [str(dic[i]), '*', unknown, '^', str(i) , '+']
                 del dic[i]
                 i += 1
                 continue
-            if len(final_list) != 0:
-                if not isinstance(dic[i], list) and dic[i] < 0:
+            if len(tmp_list) != 0:
+                if dic[i] < 0:
                     tmp_list.append('-')
                     dic[i] *= -1
                 else:
                     tmp_list.append('+')
-            if isinstance(dic[i], list): 
-                tmp_list.append(dic[i])
-            else:
-                tmp_list.append(str(dic[i]))
+            tmp_list.append(str(dic[i]))
             del dic[i]
         else:
             if i != 0:
@@ -238,30 +237,20 @@ def final_function(dic, unknown, final_list):
     if len(final_list) and final_list[0] == '-':
         final_list = tmp_list + final_list
     else:
-        final_list = tmp_list + ['+'] + final_list
+        final_list = tmp_list + final_list
+    print("final_list = {}".format(final_list))
     return final_list
 
 # find the degree
 def degree_function(expr, unknown):
-    
+
     expr_func = expr
-    d = 0
+    d = {}
     index = 0
     while index < len(expr):
         if isinstance(expr[index], list):
-            degree_1 = degree_function(expr[index], unknown)
-            if index + 2 < len(expr) and expr[index + 1] == '^':
-                degree_1 *= calcul.convert_str_nbr(expr[index + 2])
-                index += 2
-            if d < degree_1: d = degree_1
-            index += 1
-            continue
+
         if expr[index] == '^':
-            nbr = calcul.convert_str_nbr(expr[index + 1])
-            if d < nbr and calcul.convert_str_nbr(expr[index - 3]) != 0: d = nbr
-            index += 2
-        else:
-            index += 1
     expr = expr_func
     return d
 

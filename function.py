@@ -8,7 +8,6 @@ class Function:
         self.rpn = rpn_expr
         var = func_tools.convert_func_list(func_expr)
         self.expr = func_tools.simplify_func(var, unknown)
-        print("apres {}".format(self.expr)) 
         self.degree = func_tools.degree_function(self.expr, self.unknown)
         print("degree = {}".format(self.degree))
         self.name = name
@@ -64,7 +63,5 @@ class Function:
         return final_list
     
     def print_function(self):
-        print("expr initial = {}".format(self.expr))
         expr = func_tools.clean_function(self.expr, self.unknown)
-        print("expr nettoyee = {}".format(expr))
         print(func_tools.function_to_str(expr, self.unknown))

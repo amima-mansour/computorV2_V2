@@ -1,7 +1,6 @@
 import errors
 def convert_str_nbr(nbr):
 
-    print(nbr)
     if float(nbr):
         return float(nbr)
     return int(nbr)
