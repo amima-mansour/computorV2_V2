@@ -41,28 +41,6 @@ def parametre_equation(liste, inconnu):
         index += 1
     return a, b, c
 
-# trouver le degree
-def degree_polynome(liste, inconnu):
-
-    degree = 0
-    index = 0
-    while index < len(liste):
-        if isinstance(liste[index], list):
-            degree_1 = degree_polynome(liste[index], inconnu)
-            if index + 2 < len(liste) and liste[index + 1] == '^':
-                degree_1 *= calculs.nombre(liste[index + 2])
-                index += 2
-            if degree < degree_1: degree = degree_1
-            index += 1
-            continue
-        if liste[index] == '^':
-            nbr = calculs.nombre(liste[index + 1])
-            if degree < nbr and calculs.nombre(liste[index - 3]) != 0: degree = nbr
-            index += 2
-        else:
-            index += 1
-    return degree
-
 # resolution
 def resoudre(liste, inconnu):
 

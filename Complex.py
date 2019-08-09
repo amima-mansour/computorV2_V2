@@ -2,19 +2,22 @@
 import errors
 
 class Complex:
-    def __init__(self, nb):
-        self.y = 0 #img
-        self.x = 0 #real
-        print(nb)
+    def __init__(self, nb=0, x=0, y=0):
+        self.y = y #img
+        self.x = x #real        
         if nb == 'i':
             self.y = 1 
-        else:
+        elif nb != 0 and x == 0:
             self.x = float(nb)
+
     def module(self):
-        return (self.x ** 2 + self.y ** 2)**0.5
+        return (self.x ** 2 + self.y ** 2)
     
     def conjugate(self):
-        self.y -= self.y
+        x = self.x
+        y = -1 * self.y
+        c = Complex(0, x, y)
+        return c
 
     def multiplication_real(self, nbr):
         self.x *= nbr
@@ -34,7 +37,6 @@ class Complex:
             self.y = 0
             self.x = 1
             return
-        print("power = {}".format(nbr))
         while i <= nbr:
             self.multiplication_2_complex(self)
             i += 1
@@ -54,7 +56,6 @@ class Complex:
         self.y /= nbr
     
     def modulo(self, nbr):
-        print("modulo = {}".format(nbr))
         if nbr == 0:
             errors.zero_division()
         self.x %= nbr
@@ -63,7 +64,7 @@ class Complex:
     def division_2_complex(self, comp):
         if comp.x == 0 and comp.y == 0:
             errors.zero_division()
-        module = comp.module()
-        conjugate = comp.conjugate()
-        self.multiplication_2_complex(conjugate)
-        self.division_real(module)
+        mod = comp.module()
+        conj = comp.conjugate()
+        self.multiplication_2_complex(conj)
+        self.division_real(mod)

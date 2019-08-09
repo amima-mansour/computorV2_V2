@@ -5,7 +5,6 @@ import Complex as comp
 
 def eval_postfix(expr):
 
-    print("expr = {}".format(expr))
     ops = ['+', '-', '/', '%', '*', '^']
     stack = []
     for key, token in enumerate(expr):
@@ -38,5 +37,12 @@ def eval_postfix(expr):
             stack.append(c)
         else:
             stack.append(token)
-    return stack.pop()
+    c = stack.pop()
+    if not isinstance(c, comp.Complex):
+        c = comp.Complex(c)
+    if int(c.y):
+        c.y = int(c.y)
+    if int(c.x):
+        c.x = int(c.x)
+    return c
 
