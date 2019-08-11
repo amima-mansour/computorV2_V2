@@ -6,8 +6,10 @@ import RPN_Eval as rpn_eval
 import matrix
 import Complex as comp
 import function as func
+import calculation_tools as cal
 import function_tools as func_tools
 import check
+import matrix as mat
 
 class Inputs:
 
@@ -32,16 +34,32 @@ class Inputs:
                 errors.var_name(var_name)
                 return
             if '[' in var_value:
-                m = check.check_matrix(var_value)
+                m = check.check_expr_matrix(var_value)
                 if m:
-                    m1 = matrix.Matrix()
-                    if m1.col == -1:
-                        errors.matrix()
-                        return  
-                    self.matrixs[var_name.lower()] = m1 
-                    m1.print_matrix()
+                    m = self.replace_var(m, "")
+                    m1 = cal.matrix_calculation(m)
+                    if m1:
+                        self.matrixs[var_name.lower()] = m1
+                        m1.print_matrix()
             else:
-                self.variables[var_name.lower()] = rpn_eval.eval_postfix(self.check_expr(var_value, ""))
+                value = self.check_expr(var_value, "")
+                if not value:
+                    return
+                a = False
+                for el in value:
+                    if isinstance(el, list):
+                        a = True
+                        break
+                if not a:
+                    rp = rpn.shunting(value)
+                    var = rpn_eval.eval_postfix(rp[-1][2].split())
+                    self.variables[var_name.lower()] = var
+                    var.print_comp()
+                else:
+                    m1 = cal.matrix_calculation(value)
+                    if m1:
+                        self.matrixs[var_name.lower()] = m1
+                        m1.print_matrix()
         elif '(' in var_name:
             if var_name.count(')') != 1 or var_name.count(')') != 1:
                 errors.function_name(var_name)
@@ -62,51 +80,22 @@ class Inputs:
         if not check.brackets(string, '(', ')'):
             errors.check.brackets()
             return None
-        value, var_list = check.check_string(" ".join(string))
-        if not value:
-            return value
-        rp = rpn.shunting(var_list)
-        return rp[-1][2]
+        for i, el in enumerate(string):
+            if isinstance(el, list):
+                string[i] = mat.Matrix(string[i])
+        value, var_list = check.check_string(string)
+        #if not value:
+        #    return value
+        #rp = rpn.shunting(var_list)
+        #return rp[-1][2]
+        return None
     
     def check_expr(self, string, ignore):
         value, var_list = check.check_string(string)
         if not value:
             return value
-        rp = rpn.shunting(var_list)
-        value = self.replace_rpn_var(rp[-1][2], ignore)
-        return value
-
-    def replace_rpn_var(self, expr, ignore):
-        ops = ['+', '-', '/', '%', '*', '^']
-        i = 0
-        expr = expr.split()
-        length = len(expr)
-        final_expr = []
-        while i < length:
-            if expr[i].isalpha():
-                var = expr[i]
-                if var.lower() == ignore or var.lower() == 'i':
-                    final_expr.append(var.lower())
-                    if len(final_expr) >= 2 and not isinstance(final_expr[-2], comp.Complex) and final_expr[-2].isdigit():  
-                        if (i + 1 < length and (expr[i + 1] not in ops or (expr[i + 1] == '-' and i == 1))) or i + 1 == length or (i - 2 >= 0 and expr[i - 2] not in ops):
-                            final_expr += '*'
-                elif var.lower() not in self.variables:
-                    if var.lower() in self.functions:
-                        print("OK")
-                        # i += 1
-                        # final_expr.append(evaluate_func(self.functions[var.lower()][1], expr[i], self.functions[var.lower()][0]))
-                    else:
-                        errors.unknown_variable(var)
-                        return None
-                else:
-                    final_expr.append(self.variables[var.lower()])
-                    if len(final_expr) >= 2 and not isinstance(final_expr[-2], comp.Complex) and final_expr[-2].isdigit():
-                        if (i + 1 < length and expr[i + 1].isdigit()) or i + 1 == length:
-                            final_expr += '*'
-            else:
-                final_expr.append(expr[i])
-            i += 1
-        return final_expr
+        var_list = self.replace_var(var_list, ignore)
+        return var_list
 
     def replace_var(self, expr, ignore):
         ops = ['+', '-', '/', '%', '*', '^']
@@ -114,24 +103,42 @@ class Inputs:
         length = len(expr)
         final_expr = []
         while i < length:
-            if expr[i].isalpha():
+            if not isinstance(expr[i], list) and expr[i].isalpha():
                 var = expr[i]
                 if var.lower() not in self.variables:
                     if var.lower() in self.functions:
-                        print("OK")
-                        # i += 1
-                        # final_expr.append(evaluate_func(self.functions[var.lower()][1], expr[i], self.functions[var.lower()][0]))
-                    elif var.lower() == ignore:
+                        f = self.functions[var.lower()]
+                        if i + 3 < length and expr[i + 1] == '(' and expr[i + 3] == ')':
+                            print("var = {}".format(self.functions))
+                            nb = expr[i + 2]
+                            if nb.isalpha():
+                                if nb.lower() in self.variables:
+                                    nb = self.variables[nb.lower()]
+                                else:
+                                    errors.unknown_variable(nb)
+                                    return None
+                            p = f.evaluate_func(nb)
+                            final_expr.append(p)
+                            i += 3
+                        else:
+                            errors.unknown_variable(var)
+                    elif var.lower() == ignore or var.lower() == 'i':
                         if len(final_expr) >= 1 and final_expr[-1].isdigit():
-                            final_expr += '*'
+                             final_expr += '*'
                         final_expr.append(expr[i])
+                    elif var.lower() in self.matrixs:
+                        final_expr.append(self.matrixs[var.lower()].mat)
                     else:
                         errors.unknown_variable(var)
                         return None
                 else:
                     if len(final_expr) >= 1 and final_expr[-1].isdigit():
                         final_expr += '*'
-                    final_expr.append(self.variables[var.lower()])
+                    p = self.variables[var.lower()]
+                    if p.y != 0:
+                        errors.cant("matrix multiplcation with a complexe")
+                        return None
+                    final_expr.append(str(p.x))
             else:
                 final_expr.append(expr[i])
             i += 1

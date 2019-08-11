@@ -31,5 +31,17 @@ def wrong_element(msg):
 def error_matrix():
     print(colors.red + "This matrix is not well formated!" + colors.normal)
 
+def multiplication_matrix():
+    print(colors.red + "Matrix multiplication is not possible!" + colors.normal)
+
+def error_check_matrix():
+    print(colors.red + "This expression with matrix is not well formated!" + colors.normal)
+
+def determinant_matrix(string):
+    print(colors.red + string + colors.normal)
+
+def cant(string):
+    print(colors.red + "I can't do this " + string + "!"+ colors.normal)
+
 def function_name(string):
     print(colors.red + "This function name " + string + " is not well formated!" + colors.normal)

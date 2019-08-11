@@ -4,7 +4,7 @@ import errors
 class Complex:
     def __init__(self, nb=0, x=0, y=0):
         self.y = y #img
-        self.x = x #real        
+        self.x = x #real
         if nb == 'i':
             self.y = 1 
         elif nb != 0 and x == 0:
@@ -68,3 +68,24 @@ class Complex:
         conj = comp.conjugate()
         self.multiplication_2_complex(conj)
         self.division_real(mod)
+
+    def print_comp(self):
+        string =""
+        if self.x != 0:
+            string += str(self.x)
+        y = self.y
+        if y != 0:
+            if y < 0:
+                if self.x == 0:
+                    string += "-"
+                else:
+                    string += " - "
+                y *= -1
+            else:
+                if self.x != 0:
+                    string += " + "
+            if y > 1:
+                string += str(y)
+            string += 'i'
+        print(string)
+

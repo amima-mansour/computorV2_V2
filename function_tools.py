@@ -1,8 +1,9 @@
 import calculation_tools as calcul
 import re
+import matrix as mat
 
 # # find the index of closed brackets : char2
-def indix_char(func_list, char1, char2):
+def index_char(func_list, char1, char2):
 
     i = 0
     nbr_char_opened = 1
@@ -28,7 +29,7 @@ def convert_func_list(init_list):
         final_list = final_list + transform_list(init_list[:index_1])
     index_1 += 1
     new_list = init_list[index_1:]
-    index_2 = indix_char(new_list, '(', ')')
+    index_2 = index_char(new_list, '(', ')')
     final_list.append(convert_func_list(new_list[:index_2]))
     index_2 += 1
     if index_2 < len(new_list):
@@ -108,6 +109,9 @@ def clean_function(init_list, unknown):
 def simplify_func(func_expr, unknown):
 
     print("simplify = {}".format(func_expr))
+    for el in func_expr:
+        if isinstance(el, mat.Matrix):
+            return func_expr
     expr = func_expr
     dic, final_expr = {}, []
     index, dic[0] = 0, 0
@@ -240,19 +244,6 @@ def final_function(dic, unknown, final_list):
         final_list = tmp_list + final_list
     print("final_list = {}".format(final_list))
     return final_list
-
-# find the degree
-def degree_function(expr, unknown):
-
-    expr_func = expr
-    d = {}
-    index = 0
-    while index < len(expr):
-        if isinstance(expr[index], list):
-
-        if expr[index] == '^':
-    expr = expr_func
-    return d
 
 def format(func_string):
     expr = []

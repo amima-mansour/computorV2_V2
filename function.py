@@ -1,4 +1,4 @@
-
+import matrix as mat
 import RPN_Eval as rpn_eval
 import function_tools as func_tools
 
@@ -8,10 +8,7 @@ class Function:
         self.rpn = rpn_expr
         var = func_tools.convert_func_list(func_expr)
         self.expr = func_tools.simplify_func(var, unknown)
-        self.degree = func_tools.degree_function(self.expr, self.unknown)
-        print("degree = {}".format(self.degree))
         self.name = name
-
 
     def evaluate_func(self, var):
         expr = []
@@ -20,11 +17,9 @@ class Function:
                 expr.append(var)
             else:
                 expr.append(element)
-        # return rpn_eval.eval_postfix(expr)
-        return expr
+        return rpn_eval.eval_postfix(expr)
 
     def develop_power(self, puissance):
-    
         coeff, carc = 1, '+'
         index, final_list = 0, []
         while index < len(self.expr):
@@ -61,7 +56,19 @@ class Function:
                 coeff, carac = -1, '+'
             final_list.extend([carc, str(coeff * tmp), '*',self.unknown, '^', '1'])
         return final_list
-    
+
     def print_function(self):
-        expr = func_tools.clean_function(self.expr, self.unknown)
-        print(func_tools.function_to_str(expr, self.unknown))
+        a = False
+        for el in self.expr:
+            if isinstance(el, mat.Matrix):
+                a = True
+                break
+        if not a:
+            expr = func_tools.clean_function(self.expr, self.unknown)
+            print(func_tools.function_to_str(expr, self.unknown))
+        else:
+            for el in self.expr:
+                if isinstance(el, mat.Matrix):
+                    el.print_matrix()
+                else:
+                    print(el)
