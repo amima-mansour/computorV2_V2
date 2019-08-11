@@ -54,7 +54,7 @@ class Inputs:
                     rp = rpn.shunting(value)
                     var = rpn_eval.eval_postfix(rp[-1][2].split())
                     self.variables[var_name.lower()] = var
-                    var.print_comp()
+                    print(var.str_comp())
                 else:
                     m1 = cal.matrix_calculation(value)
                     if m1:
@@ -66,6 +66,7 @@ class Inputs:
                 return
             func_name, unknown = check.check_function_name(var_name)
             func_expr = self.replace_var(func_tools.format(var_value), unknown)
+            print(func_expr)
             func_rpn = self.check_function_expr(func_expr, unknown, var_name)
             f = func.Function(func_name, unknown, func_rpn, func_expr)
             self.functions[func_name] = f
@@ -84,10 +85,6 @@ class Inputs:
             if isinstance(el, list):
                 string[i] = mat.Matrix(string[i])
         value, var_list = check.check_string(string)
-        #if not value:
-        #    return value
-        #rp = rpn.shunting(var_list)
-        #return rp[-1][2]
         return None
     
     def check_expr(self, string, ignore):
@@ -123,7 +120,7 @@ class Inputs:
                         else:
                             errors.unknown_variable(var)
                     elif var.lower() == ignore or var.lower() == 'i':
-                        if len(final_expr) >= 1 and final_expr[-1].isdigit():
+                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix) and final_expr[-1].isdigit():
                              final_expr += '*'
                         final_expr.append(expr[i])
                     elif var.lower() in self.matrixs:
@@ -139,6 +136,13 @@ class Inputs:
                         errors.cant("matrix multiplcation with a complexe")
                         return None
                     final_expr.append(str(p.x))
+            elif expr[i] == '[':
+                index = func_tools.index_char("".join(expr[i + 1:]), '[', ']') + i + 1
+                m = check.check_matrix("".join(expr[i:index + 1]))
+                if not m:
+                    return None
+                i = index
+                final_expr.append(mat.Matrix(m))
             else:
                 final_expr.append(expr[i])
             i += 1

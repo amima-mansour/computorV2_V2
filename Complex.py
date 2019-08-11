@@ -69,7 +69,7 @@ class Complex:
         self.multiplication_2_complex(conj)
         self.division_real(mod)
 
-    def print_comp(self):
+    def str_comp(self):
         string =""
         if self.x != 0:
             string += str(self.x)
@@ -87,5 +87,5 @@ class Complex:
             if y > 1:
                 string += str(y)
             string += 'i'
-        print(string)
+        return string
 

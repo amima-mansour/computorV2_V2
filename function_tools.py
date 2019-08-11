@@ -1,7 +1,10 @@
 import calculation_tools as calcul
 import re
 import matrix as mat
-
+import Complex as comp
+import parsing
+import RPN as rpn
+import RPN_Eval as rpn_eval
 # # find the index of closed brackets : char2
 def index_char(func_list, char1, char2):
 
@@ -65,7 +68,7 @@ def clean_function_list(init_list, final_list, index, unknown):
         final_list.extend(init_list[index-2:index])
     final_list.append(clean_function(init_list[index], unknown))
     index += 1
-    if index < len(init_list) and init_list[index] in '*/^':
+    if index < len(init_list) and not isinstance(init_list[index], comp.Complex) and init_list  in '*/^':
         final_list.extend(init_list[index:index + 2])
         index += 2
     if index < len(init_list) and init_list[index] in '+-':
@@ -106,9 +109,9 @@ def clean_function(init_list, unknown):
     return final_list
 
 # simplify function expression : for example 2 * x^2 + 1 + 2 * x + 5 - 2 * x^2 = 2 * x + 6
-def simplify_func(func_expr, unknown):
+def simplify_func(list_expr, unknown):
 
-    print("simplify = {}".format(func_expr))
+    func_expr = list_expr
     for el in func_expr:
         if isinstance(el, mat.Matrix):
             return func_expr
@@ -116,6 +119,7 @@ def simplify_func(func_expr, unknown):
     dic, final_expr = {}, []
     index, dic[0] = 0, 0
     while index >= 0 and index < len(expr) and len(expr) > 0 :
+        print("expr after suppr = {}".format(expr))
         if isinstance(expr[index], list) and unknown in expr[index]:
             if index - 1 >= 0 and expr[index - 1] == '-':
                 final_expr.append('-')
@@ -128,13 +132,34 @@ def simplify_func(func_expr, unknown):
             final_expr.append(simplify_func(expr[index], unknown))
             del expr[index]
             if index < len(expr) and (expr[index] == '^' or expr[index] == '/' or expr[index] == '*'):
-                final_expr.extend(expr[index:index + 2])
+                final_expr.append(expr[index])
+                final_expr.append(simplify_func(expr[index + 1], unknown))
                 del expr[index:index + 2]
             if index - 2 >= 0 and expr[index - 1] == '*':
-                final_expr.extend[index-2:index]
+                final_expr.append(expr[index - 2])
+                final_expr.append(expr[index - 1])
+                #print("expr life = {}".format(expr[index - 2]))
+                #final_expr.extend[index-2:index]
+            print("expr avant avant = {}".format(final_expr))
             continue
+        print(expr)
         if unknown == expr[index]:
             degree, nbr, expr, coeff, index = elements_polynome(expr, index)
+            print("expr = {}, nbr = {}".format(expr, nbr))
+            if nbr == unknown or expr[index] == '*':
+                if nbr == unknown:
+                    degree += 1
+                    nbr = '1'
+                string = expr[index:]
+                while index < len(expr) and string[0] == '*':
+                    print(index, string[1])
+                    if string[1].isdigit():
+                        nbr = str(calcul.convert_str_nbr(nbr) * calcul.convert_str_nbr(string[1]))
+                    else:
+                        degree += 1
+                    index += 2
+                    string = expr[index:]
+                    print("string = {}".format(string))
             if degree in dic.keys():
                 if not isinstance(nbr, list) and not isinstance(dic[degree], list):
                     dic[degree] += coeff * calcul.convert_str_nbr(nbr)
@@ -143,14 +168,27 @@ def simplify_func(func_expr, unknown):
                     dic[degree] = coeff * calcul.convert_str_nbr(nbr)
                 else:
                     dic[degree] = nbr
+        elif isinstance(expr[index], list):
+            p = parsing.Inputs()
+            value = p.check_expr("".join(expr[index]), "")
+            if not value:
+                return None
+            rp = rpn.shunting(value)
+            var = rpn_eval.eval_postfix(rp[-1][2].split())
+            expr[index] = var
+            #if index + 1 < len(expr) and expr[index + 1] == '*':
+            #    final_expr.append('*')
+            #    index += 1
+            #del expr[index]
+            index += 1
         else:
             index += 1
     tmp = degree_null(expr, unknown)
     if tmp == 'null': return []
     if 0 not in dic:
-        dic[0] = tmp
+        dic[0] = str(tmp)
     else:
-        dic[0] += tmp
+        dic[0] = str(dic[0]) + str(tmp)
     return final_function(dic, unknown, final_expr)
 
 # find coefficients of degree 0
@@ -159,10 +197,13 @@ def degree_null(expr, unknown):
     nbr = 0
     index = 0
     while index < len(expr):
-        if type(expr[index]) is not list and expr[index].isdigit():
+        if type(expr[index]) is not list and (isinstance(expr[index],comp.Complex) or expr[index].isdigit()):
             coeff = 1
             if index == 0:
-                nbr = calcul.convert_str_nbr(expr[index])
+                if isinstance(expr[index], comp.Complex):
+                    nbr = expr[index].str_comp()
+                else:
+                    nbr = calcul.convert_str_nbr(expr[index])
                 index += 1
                 continue
             if index - 1 >= 0 and expr[index - 1] in '+-':
@@ -208,6 +249,8 @@ def elements_polynome(expr, index):
         index -= 1
         nbr = '1'
     if index < 0: index = 0
+    if isinstance(nbr, list):
+        print("yes")
     return degree, nbr, expr, coeff, index
 
 # rebuild the function from dictionnary elements
@@ -270,6 +313,8 @@ def format(func_string):
                 i +=1
             expr.append(var)
             continue
+        elif func_string[i] in "[],;":
+            expr.append(func_string[i])
         else:
             expr += format(func_string[i])
         i += 1
@@ -288,6 +333,8 @@ def function_to_str(expr, unknown):
                     string += string_inter + ' '
                 else:
                     string += '(' + string_inter + ')'
+        elif isinstance(expr[index], comp.Complex):
+            string += expr[index].str_comp()
         else:
             string += expr[index]
         if index != len(expr) - 1:
