@@ -39,6 +39,7 @@ def dimensions_multiplication(M1, M2):
         return "KO"
     else:
         return "OK"
+
 # fonction qui permet de determiner le determinant de la matrice
 def determinant_2(M):
     return M[0][0] * M[1][1] - M[0][1] * M[1][0]
@@ -72,19 +73,18 @@ class Matrix:
                 return -1
         return col
     
-    def print_matrix(self):
-        i = 1
-        for element in self.mat:
-            string = '[ '
+    def str_matrix(self):
+        string = ""
+        for i, element in enumerate(self.mat):
+            string += '[ '
             for key, e in enumerate(element):
-                if int(e) or not e:
-                    e = int(e)
                 string += str(e) + ' '
                 if key != len(element) - 1:
                     string += ', '
             string += ']'
-            print(string)
-            i += 1
+            if i < len(self.mat) - 1:
+                string += "\n"
+        return string
 
     # fonction qui permet de verifier que si une matrice est carree
     def square_matrix(self):

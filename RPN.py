@@ -2,7 +2,8 @@
 
 from sys import argv as av
 from collections import namedtuple
- 
+import errors
+
 OpInfo = namedtuple('OpInfo', 'prec assoc')
 L, R = 'Left Right'.split()
  
@@ -17,15 +18,13 @@ ops = {
  ')': OpInfo(prec=0, assoc=L),
  }
  
-NUM, LPAREN, RPAREN, ALPHA = 'NUMBER ( ) ALPHA'.split()
+NUM, ALPHA, LPAREN, RPAREN = 'NUMBER ALPHA ( )'.split()
  
 def get_input(inp = None):
     'Inputs an expression and returns list of (TOKENTYPE, tokenvalue)'
 
     inp = " ".join(inp)
-    print(inp)
     tokens = inp.strip().split()
-    print(tokens)
     tokenvals = []
     i = 0
     for token in tokens:
@@ -84,6 +83,9 @@ def shunting(tokenvals):
             else:
                 action = 'Discard ")"'
             table.append( (v, action, ' '.join(outq), ' '.join(s[0] for s in stack), note) )
+        else:
+            errors.operator(token)
+            return None
     note = 'Drain stack to output'
     while stack:
         v = ''

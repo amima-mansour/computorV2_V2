@@ -55,8 +55,17 @@ def check_string(string):
                 errors.operator(string[i])
                 return False, l
             if i + 1 < length and string[i] not in '()' and string[i + 1] in ops_2:
-                errors.operator(string[i + 1])
-                return False, l
+                if string[i + 1] == '*' and string[i] == '*':
+                    l.append("**")
+                    i += 1
+                    if i + 1 < length and string[i + 1] in ops:
+                        errors.operator(string[i + 1])
+                        return False, l
+                    i += 1
+                    continue
+                else:
+                    errors.operator(string[i + 1])
+                    return False, l
             if i + 1 < length and string[i] == ')' and string[i + 1] not in ops_2:
                 errors.operator(string[i + 1])
                 return False, l
@@ -97,7 +106,6 @@ def check_expr_matrix(string):
             tmp_expr = tmp_expr[:-1]
         if len(tmp_expr) > 0:
             if len(tmp_expr) < 2 or ((len(tmp_expr) > 0 and tmp_expr[-1] != '*')):
-                print("1")
                 errors.error_check_matrix()
                 return None
             value, check_expr = check_string(tmp_expr[:-1])
@@ -113,8 +121,8 @@ def check_expr_matrix(string):
                 errors.error_check_matrix()
                 return None
             char = string[index_2 + 1]
-            if len(string) > (index_2 + 1) and string[index_2 + 1] == '*':
-                if len(string) < (index_2 + 2) or string[index_2 + 2] != '*':
+            if index_2 + 2 < len(string) and string[index_2 + 2] in '+*-':
+                if string[index_2  +2] != '*' and char != '*':
                     errors.error_check_matrix()
                     return None
                 index_2 += 1

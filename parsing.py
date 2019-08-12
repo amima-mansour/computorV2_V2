@@ -26,10 +26,10 @@ class Inputs:
             return
         string_list = string.split('=')
         var_name = string_list[0].replace(" ", "")
-        var_value = string_list[1]
+        var_value = string_list[1].replace(" ", "")
         if var_value == '?':
-            self.current = self.check_expr(var_name)
-        elif var_name.isalpha():
+            var_name, var_value = var_value, var_name
+        if var_name.isalpha() or var_name == '?':
             if var_name == 'i':
                 errors.var_name(var_name)
                 return
@@ -39,8 +39,9 @@ class Inputs:
                     m = self.replace_var(m, "")
                     m1 = cal.matrix_calculation(m)
                     if m1:
-                        self.matrixs[var_name.lower()] = m1
-                        m1.print_matrix()
+                        if var_name != '?':
+                            self.matrixs[var_name.lower()] = m1
+                        print(m1.str_matrix())
             else:
                 value = self.check_expr(var_value, "")
                 if not value:
@@ -52,23 +53,35 @@ class Inputs:
                         break
                 if not a:
                     rp = rpn.shunting(value)
+                    if not rp:
+                        return
+                    print("rp = {}".format(rp[-1][2]))
                     var = rpn_eval.eval_postfix(rp[-1][2].split())
-                    self.variables[var_name.lower()] = var
+                    if var_name != '?':
+                        self.variables[var_name.lower()] = var
                     print(var.str_comp())
                 else:
                     m1 = cal.matrix_calculation(value)
                     if m1:
-                        self.matrixs[var_name.lower()] = m1
-                        m1.print_matrix()
+                        if var_name != '?':
+                            self.matrixs[var_name.lower()] = m1
+                        print(m1.str_matrix())
         elif '(' in var_name:
             if var_name.count(')') != 1 or var_name.count(')') != 1:
                 errors.function_name(var_name)
                 return
             func_name, unknown = check.check_function_name(var_name)
-            func_expr = self.replace_var(func_tools.format(var_value), unknown)
-            print(func_expr)
-            func_rpn = self.check_function_expr(func_expr, unknown, var_name)
-            f = func.Function(func_name, unknown, func_rpn, func_expr)
+            func_expr = func_tools.format(var_value)
+            if not func_expr:
+                return
+            func_expr = self.replace_var(func_expr, unknown)
+            func_expr = self.check_function_expr(func_expr, unknown, var_name)
+            if not func_expr:
+                return
+            if '**' in func_expr:
+                errors.operator('**')
+                return
+            f = func.Function(func_name, unknown, func_expr)
             self.functions[func_name] = f
             f.print_function()
         else:
@@ -85,9 +98,12 @@ class Inputs:
             if isinstance(el, list):
                 string[i] = mat.Matrix(string[i])
         value, var_list = check.check_string(string)
-        return None
+        if not value:
+            return None
+        return var_list
     
     def check_expr(self, string, ignore):
+        string = string.replace(" ", "")
         value, var_list = check.check_string(string)
         if not value:
             return value
@@ -105,18 +121,27 @@ class Inputs:
                 if var.lower() not in self.variables:
                     if var.lower() in self.functions:
                         f = self.functions[var.lower()]
-                        if i + 3 < length and expr[i + 1] == '(' and expr[i + 3] == ')':
-                            print("var = {}".format(self.functions))
-                            nb = expr[i + 2]
-                            if nb.isalpha():
+                        if i + 3 < length and expr[i + 1] == '(':
+                            index = func_tools.index_char(expr[i + 2:], '(', ')') + i + 2
+                            nb = "".join(expr[i + 2:index])
+                            if nb.isalpha() and nb != 'i':
                                 if nb.lower() in self.variables:
-                                    nb = self.variables[nb.lower()]
+                                    nb = self.variables[nb.lower()].str_comp()
                                 else:
                                     errors.unknown_variable(nb)
                                     return None
+                            else:
+                                value = self.check_expr(nb, "")
+                                if not value:
+                                    return None
+                                rp = rpn.shunting(value)
+                                if not rp:
+                                    return
+                                var = rpn_eval.eval_postfix(rp[-1][2].split())
+                                nb = var.str_comp()
                             p = f.evaluate_func(nb)
-                            final_expr.append(p)
-                            i += 3
+                            final_expr.append(p.str_comp())
+                            i = index + 1
                         else:
                             errors.unknown_variable(var)
                     elif var.lower() == ignore or var.lower() == 'i':
@@ -132,10 +157,7 @@ class Inputs:
                     if len(final_expr) >= 1 and final_expr[-1].isdigit():
                         final_expr += '*'
                     p = self.variables[var.lower()]
-                    if p.y != 0:
-                        errors.cant("matrix multiplcation with a complexe")
-                        return None
-                    final_expr.append(str(p.x))
+                    final_expr += [str(p.x), '+', str(p.y), '*', 'i']
             elif expr[i] == '[':
                 index = func_tools.index_char("".join(expr[i + 1:]), '[', ']') + i + 1
                 m = check.check_matrix("".join(expr[i:index + 1]))

@@ -5,6 +5,8 @@ import Complex as comp
 import parsing
 import RPN as rpn
 import RPN_Eval as rpn_eval
+import errors
+
 # # find the index of closed brackets : char2
 def index_char(func_list, char1, char2):
 
@@ -315,8 +317,11 @@ def format(func_string):
             continue
         elif func_string[i] in "[],;":
             expr.append(func_string[i])
-        else:
+        elif isinstance(func_string[i], list):
             expr += format(func_string[i])
+        else:
+            errors.operator(func_string[i])
+            return None
         i += 1
     return expr
 
