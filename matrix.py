@@ -1,5 +1,6 @@
 import calculation_tools as cal
 import errors
+import Complex as comp
 
 def convert_list_string(l):
     string = "[]"
@@ -72,13 +73,13 @@ class Matrix:
             elif col != len(el):
                 return -1
         return col
-    
+
     def str_matrix(self):
         string = ""
         for i, element in enumerate(self.mat):
             string += '[ '
             for key, e in enumerate(element):
-                string += str(e) + ' '
+                string += e.str_comp() + ' '
                 if key != len(element) - 1:
                     string += ', '
             string += ']'
@@ -88,7 +89,7 @@ class Matrix:
 
     # fonction qui permet de verifier que si une matrice est carree
     def square_matrix(self):
-            return self.col == self.row
+        return self.col == self.row
 
     # fonction qui permet de faire la somme de deux matrices
     def addition(self, M2):
@@ -97,7 +98,11 @@ class Matrix:
         M = [[0 for j in range(self.col)] for i in range(self.row)]
         for i in range(self.row):
             for j in range(self.col):
-                M[i][j] = cal.convert_str_nbr(self.mat[i][j]) + cal.convert_str_nbr(M2.mat[i][j])
+                c = Comp.Complex(0)
+                c.x = self.mat[i][j].x
+                c.y = self.mat[i][j].y
+                c.addition(M2.mat[i][j])
+                M[i][j] = c
         return Matrix(M)
 
     # fonction qui permet de faire la soustraction de deux matrices
@@ -107,7 +112,11 @@ class Matrix:
         M=[[0 for j in range(self.col)] for i in range(self.row)]
         for i in range(self.row):
             for j in range(self.col):
-                M[i][j] = cal.convert_str_nbr(self.mat[i][j]) - cal.convert_str_nbr(M2.mat[i][j])
+               c = Comp.Complex(0)
+               c.x = self.mat[i][j].x
+               c.y = self.mat[i][j].y
+               c.substruction(M2.mat[i][j])
+            M[i][j] =c
         return Matrix(M)
 
     # fonction qui permet de faire la multiplication de deux matrices
@@ -120,15 +129,23 @@ class Matrix:
         for i in range(n1):
             for j in range(m1):
                 for k in range(self.col):
-                    M[i][j] += cal.convert_str_nbr(self.mat[i][k]) * cal.convert_str_nbr(M2.mat[k][j])
+                    c = Comp.Complex(0)
+                    c.x = self.mat[i][j].x
+                    c.y = self.mat[i][j].y
+                    c.multiplication_2_complex(M2.mat[i][j])
+                    M[i][j] = c
         return Matrix(M)
 
     # fonction qui permet de faire la multiplication d'une matrice par un reel
-    def multiplication_real(self, real):
+    def multiplication_comp(self, a):
         M =[[0 for j in range(self.col)] for i in range(self.row)]#creer une matrice nxn pleine de zéro
         for i in range(self.row):
             for j in range(self.col):
-                M[i][j] = real * cal.convert_str_nbr(self.mat[i][j])
+                c = comp.Complex(0)
+                c.y = a.y
+                c.x = a.x
+                c.multiplication_2_complex(self.mat[i][j])
+                M[i][j] = c
         return Matrix(M)
 
     # fonction qui permet de extraire d'une matrice d'une autre

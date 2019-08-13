@@ -3,6 +3,8 @@
 import errors
 import matrix as mat
 import function_tools as func_tools
+import RPN as rpn
+import RPN_Eval as rpn_eval
 
 def brackets(s, pushChar, popChar):
     'The function below checks if parentheses are correctly closed'
@@ -85,87 +87,6 @@ def check_string(string):
             return False, l
         i += 1
     return True, l
-
-def check_expr_matrix(string):
-    expr = []
-    while len(string) > 0:
-        if "[" not in string:
-            value, check_expr = check_string(string)
-            if not value:
-                return None
-            else:
-                expr += check_expr
-                return expr
-        index_1 = string.index("[")
-        index_2 = func_tools.index_char(string[index_1 + 1:], "[", "]") + index_1 + 1
-        tmp_expr = string[:index_1]
-        matrix_expr = check_matrix(string[index_1:index_2 + 1])
-        if matrix_expr is None:
-            return None
-        while len(tmp_expr) > 0 and tmp_expr[-1] == ' ':
-            tmp_expr = tmp_expr[:-1]
-        if len(tmp_expr) > 0:
-            if len(tmp_expr) < 2 or ((len(tmp_expr) > 0 and tmp_expr[-1] != '*')):
-                errors.error_check_matrix()
-                return None
-            value, check_expr = check_string(tmp_expr[:-1])
-            if not value:
-                return None
-            expr += check_expr
-            expr.append(tmp_expr[-1])
-        expr.append(matrix_expr)
-        if len(string) > (index_2 + 1):
-            while index_2 + 1 < len(string) and string[index_2 + 1] == ' ':
-                index_2 += 1
-            if len(string) > (index_2 + 1) and string[index_2 + 1] not in '+-*':
-                errors.error_check_matrix()
-                return None
-            char = string[index_2 + 1]
-            if index_2 + 2 < len(string) and string[index_2 + 2] in '+*-':
-                if string[index_2  +2] != '*' and char != '*':
-                    errors.error_check_matrix()
-                    return None
-                index_2 += 1
-                char += '*'
-            expr.append(char)
-        string = string[index_2 + 2:]
-    return expr
-
-def check_matrix(string):
-    if not brackets(string, '[', ']'):
-        errors.brackets()
-        return None
-    string = string.strip()
-    length = len(string)
-    i = 1
-    string_list = []
-    while i < length - 1:
-        if not string[i].isdigit() and string[i] not in ',;[]':
-            errors.error_matrix()
-            return None
-        if string[i] == '[':
-            l = []
-            i += 1
-            while string[i] != "]":
-                nb = 0
-                j = i
-                while string[j].isdigit():
-                    nb = nb * 10 + int(string[j])
-                    j += 1
-                if j != i:
-                    i = j
-                    l.append(nb)
-                else:
-                    i += 1
-                if not string[i].isdigit() and string[i] not in ',;][':
-                    errors.error_matrix()
-                    return None
-            string_list.append(l)
-        i += 1
-    if string[-1] != ']' or string[-2] != ']':
-        errors.error_matrix()
-        return None
-    return string_list
 
 def check_function_name(string):
     index_1 = string.index('(')

@@ -60,7 +60,7 @@ class Complex:
             errors.zero_division()
         self.x %= nbr
         self.y %= nbr
-    
+
     def division_2_complex(self, comp):
         if comp.x == 0 and comp.y == 0:
             errors.zero_division()
