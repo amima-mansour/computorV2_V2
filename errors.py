@@ -40,8 +40,8 @@ def error_check_matrix():
 def determinant_matrix(string):
     print(colors.red + string + colors.normal)
 
-def cant(string):
-    print(colors.red + "I can't do this " + string + "!"+ colors.normal)
+def cant():
+    print(colors.red + "I can't resolve this equation!"+ colors.normal)
 
 def function_name(string):
     print(colors.red + "This function name " + string + " is not well formated!" + colors.normal)

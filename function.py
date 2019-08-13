@@ -9,6 +9,7 @@ class Function:
         self.unknown = unknown
         #self.expr = func_tools.simplify_func(var, unknown)
         self.expr = func_expr
+        print("expr = {}".format(func_expr))
         self.name = name
 
     def evaluate_func(self, var):
