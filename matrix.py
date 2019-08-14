@@ -100,6 +100,9 @@ class Matrix:
 
     # fonction qui permet de faire la somme de deux matrices
     def addition(self, M2):
+        if not isinstance(M2, Matrix):
+            errors.operation
+            return None
         if compare_dimensions(self, M2) == "KO":
             return None
         M = [[0 for j in range(self.col)] for i in range(self.row)]
@@ -114,6 +117,9 @@ class Matrix:
 
     # fonction qui permet de faire la soustraction de deux matrices
     def substruction(self, M2):
+        if not isinstance(M2, Matrix):
+            errors.operation
+            return None
         if compare_dimensions(self, M2) == "KO":
             return None
         M=[[0 for j in range(self.col)] for i in range(self.row)]
@@ -128,6 +134,9 @@ class Matrix:
 
     # fonction qui permet de faire la multiplication de deux matrices
     def multiplication(self, M2):
+        if not isinstance(M2, Matrix):
+            errors.operation
+            return None
         if dimensions_multiplication(self, M2) == "KO":
             return None
         n1 = self.row
@@ -145,6 +154,9 @@ class Matrix:
 
     # fonction qui permet de faire la multiplication d'une matrice par un reel
     def multiplication_comp(self, a):
+        if not isinstance(a, comp.Complex):
+            errors.operation()
+            return None
         M =[[0 for j in range(self.col)] for i in range(self.row)]#creer une matrice nxn pleine de zéro
         for i in range(self.row):
             for j in range(self.col):

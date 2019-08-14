@@ -18,6 +18,9 @@ def brackets():
 def syntax():
     print(colors.red + "ERROR: Syntax" + colors.normal)
 
+def operation():
+    print(colors.red + "Operation not permitted!" + colors.normal)
+
 def var_name(string):
     print(colors.red +  "ERROR: Variable Name\n" + string + " can not be a variable name" + colors.normal)
 

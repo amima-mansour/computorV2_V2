@@ -52,6 +52,9 @@ class Inputs:
                         a = True
                         break
                 if not a:
+                    if '**' in value:
+                        errors.operator('**')
+                        return
                     rp = rpn.shunting(value)
                     if not rp:
                         return
@@ -349,6 +352,7 @@ class Inputs:
             if op == '**':
                 if not A or not B:
                     tmp = None
+                    errors.operation()
                 else:
                     tmp=  A.multiplication(B)
             elif op == '*':
@@ -362,11 +366,13 @@ class Inputs:
             elif op == '+':
                 if not A or not B:
                     tmp = None
+                    errors.operation()
                 else:
                     tmp = A.addition(B)
             else:
                 if not A or not B:
                     tmp = None
+                    errors.operation()
                 else:
                     tmp = A.substruction(B)
             if tmp is None:
