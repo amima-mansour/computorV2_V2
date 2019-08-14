@@ -1,6 +1,7 @@
 import calculation_tools as cal
 import errors
 import Complex as comp
+import colors
 
 def convert_list_string(l):
     string = "[]"
@@ -27,7 +28,7 @@ def compare_dimensions(M1, M2):
         assert M1.col == M2.col
         assert M1.row == M2.row
     except:
-        print("Error : Matrix dimensions")
+        print(colors.red + "Error : Matrix dimensions" + colors.normal)
         return "KO"
     return "OK"
 

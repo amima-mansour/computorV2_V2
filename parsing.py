@@ -145,7 +145,7 @@ class Inputs:
             while len(tmp_expr) > 0 and tmp_expr[-1] == ' ':
                 tmp_expr = tmp_expr[:-1]
             if len(tmp_expr) > 0:
-                if len(tmp_expr) < 2 or ((len(tmp_expr) > 0 and tmp_expr[-1] != '*')):
+                if len(tmp_expr) < 2:
                     errors.error_check_matrix()
                     return None
                 value, check_expr = check.check_string(tmp_expr[:-1])
@@ -255,11 +255,11 @@ class Inputs:
                                 nb = var.str_comp()
                             p = f.evaluate_func(nb)
                             if not p:
-                                return one
+                                return None
                             char = '+'
                             if p.y < 0:
                                 char = '-'
-                            p = [str(p.x), char, str(p.y), '*', 'i']
+                            p = '(' + str(p.x) + char + str(p.y) + '*i)'
                             final_expr += p
                             i = index
                         else:
