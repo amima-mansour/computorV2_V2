@@ -265,7 +265,7 @@ class Inputs:
                         else:
                             errors.unknown_variable(var)
                     elif var.lower() == ignore or var.lower() == 'i':
-                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix) and final_expr[-1].isdigit() or '.' in final_expr[-1]:
+                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix) and (final_expr[-1].isdigit() or '.' in final_expr[-1]):
                             final_expr += '*'
                         final_expr.append(expr[i])
                     elif var.lower() in self.matrixs:
@@ -311,10 +311,12 @@ class Inputs:
                 i = index - 1
                 while i > 0 and calc_list[i] != '(':
                     i -= 1
-                value = self.check_expr_matrix("".join(calc_list[i + 1:index - 1]))
-                if not value:
-                    return None
-                rp = rpn.shunting(value)
+                j = i + 1
+                while j < index -1:
+                    if isinstance(calc_list[j], comp.Complex):
+                        calc_list[j] = str(calc_list[j].x) + " + " + str(calc_list[j].y) + " * i"
+                    j += 1
+                rp = rpn.shunting(calc_list[i + 1:index-1])
                 if not rp:
                     return None
                 a = rpn_eval.eval_postfix(rp[-1][2].split())
@@ -334,10 +336,12 @@ class Inputs:
                 i = index + 1
                 while i < len(calc_list) and calc_list[i] != ')':
                     i += 1
-                value = self.check_expr_matrix("".join(calc_list[index + 2:i]))
-                if not value:
-                    return None
-                rp = rpn.shunting(value)
+                j = index + 2
+                while j < i:
+                    if isinstance(calc_list[j], comp.Complex):
+                        calc_list[j] = str(calc_list[j].x) + " + " + str(calc_list[j].y) + " * i"
+                    j += 1
+                rp = rpn.shunting(calc_list[index + 2:i])
                 if not rp:
                     return None
                 b = rpn_eval.eval_postfix(rp[-1][2].split())

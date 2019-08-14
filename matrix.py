@@ -82,7 +82,10 @@ class Matrix:
         for i, element in enumerate(self.mat):
             string += '[ '
             for key, e in enumerate(element):
-                string += e.str_comp() + ' '
+                if isinstance(e, comp.Complex):
+                    string += e.str_comp() + ' '
+                else:
+                    string += str(e) + ' '
                 if key != len(element) - 1:
                     string += ', '
             string += ']'
@@ -111,6 +114,8 @@ class Matrix:
                 c = comp.Complex(0)
                 c.x = self.mat[i][j].x
                 c.y = self.mat[i][j].y
+                if not isinstance(M2.mat[i][j], comp.Complex):
+                    M2.mat[i][j] = comp.Complex(M2.mat[i][j])
                 c.addition(M2.mat[i][j])
                 M[i][j] = c
         return Matrix(M)
