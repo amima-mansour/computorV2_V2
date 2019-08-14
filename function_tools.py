@@ -110,120 +110,6 @@ def clean_function(init_list, unknown):
             index += 1
     return final_list
 
-# simplify function expression : for example 2 * x^2 + 1 + 2 * x + 5 - 2 * x^2 = 2 * x + 6
-def simplify_func(list_expr, unknown):
-
-    func_expr = list_expr
-    for el in func_expr:
-        if isinstance(el, mat.Matrix):
-            return func_expr
-    expr = func_expr
-    dic, final_expr = {}, []
-    index, dic[0] = 0, 0
-    while index >= 0 and index < len(expr) and len(expr) > 0 :
-        print("expr after suppr = {}".format(expr))
-        if isinstance(expr[index], list) and unknown in expr[index]:
-            if index - 1 >= 0 and expr[index - 1] == '-':
-                final_expr.append('-')
-            if len(final_expr) > 0 and final_expr[-1] != '-':
-                final_expr.append('+')
-            if index - 2 >= 0 and expr[index - 1] == '*':
-                final_expr.extend(expr[index-2:index])
-                del expr[index -2:index]
-                index -= 2
-            final_expr.append(simplify_func(expr[index], unknown))
-            del expr[index]
-            if index < len(expr) and (expr[index] == '^' or expr[index] == '/' or expr[index] == '*'):
-                final_expr.append(expr[index])
-                final_expr.append(simplify_func(expr[index + 1], unknown))
-                del expr[index:index + 2]
-            if index - 2 >= 0 and expr[index - 1] == '*':
-                final_expr.append(expr[index - 2])
-                final_expr.append(expr[index - 1])
-                #print("expr life = {}".format(expr[index - 2]))
-                #final_expr.extend[index-2:index]
-            print("expr avant avant = {}".format(final_expr))
-            continue
-        print(expr)
-        if unknown == expr[index]:
-            degree, nbr, expr, coeff, index = elements_polynome(expr, index)
-            print("expr = {}, nbr = {}".format(expr, nbr))
-            if nbr == unknown or expr[index] == '*':
-                if nbr == unknown:
-                    degree += 1
-                    nbr = '1'
-                string = expr[index:]
-                while index < len(expr) and string[0] == '*':
-                    print(index, string[1])
-                    if string[1].isdigit():
-                        nbr = str(calcul.convert_str_nbr(nbr) * calcul.convert_str_nbr(string[1]))
-                    else:
-                        degree += 1
-                    index += 2
-                    string = expr[index:]
-                    print("string = {}".format(string))
-            if degree in dic.keys():
-                if not isinstance(nbr, list) and not isinstance(dic[degree], list):
-                    dic[degree] += coeff * calcul.convert_str_nbr(nbr)
-            else:
-                if not isinstance(nbr, list):
-                    dic[degree] = coeff * calcul.convert_str_nbr(nbr)
-                else:
-                    dic[degree] = nbr
-        elif isinstance(expr[index], list):
-            p = parsing.Inputs()
-            value = p.check_expr("".join(expr[index]), "")
-            if not value:
-                return None
-            rp = rpn.shunting(value)
-            var = rpn_eval.eval_postfix(rp[-1][2].split())
-            expr[index] = var
-            #if index + 1 < len(expr) and expr[index + 1] == '*':
-            #    final_expr.append('*')
-            #    index += 1
-            #del expr[index]
-            index += 1
-        else:
-            index += 1
-    tmp = degree_null(expr, unknown)
-    if tmp == 'null': return []
-    if 0 not in dic:
-        dic[0] = str(tmp)
-    else:
-        dic[0] = str(dic[0]) + str(tmp)
-    return final_function(dic, unknown, final_expr)
-
-# find coefficients of degree 0
-def degree_null(expr, unknown):
-
-    nbr = 0
-    index = 0
-    while index < len(expr):
-        if type(expr[index]) is not list and (isinstance(expr[index],comp.Complex) or expr[index].isdigit()):
-            coeff = 1
-            if index == 0:
-                if isinstance(expr[index], comp.Complex):
-                    nbr = expr[index].str_comp()
-                else:
-                    nbr = calcul.convert_str_nbr(expr[index])
-                index += 1
-                continue
-            if index - 1 >= 0 and expr[index - 1] in '+-':
-                if index - 1 >= 0 and expr[index - 1] == '-':
-                    coeff = -1
-                nbr += coeff * calcul.convert_str_nbr(expr[index])
-        elif isinstance(expr[index], list) and unknown not in expr[index]:
-            if nbr != 0 and not isinstance(nbr, list):
-                print("Error : mixed types")
-                return 'null'
-            if not nbr:
-                nbr = expr[index]
-        else:
-            pass
-        index += 1
-    return nbr
-
-# find the coeff for a degree 
 def elements_polynome(expr, index):
 
     coeff, degree = 1, 1
@@ -287,14 +173,31 @@ def final_function(dic, unknown, final_list):
         final_list = tmp_list + final_list
     else:
         final_list = tmp_list + final_list
-    print("final_list = {}".format(final_list))
     return final_list
 
 def format(func_string):
     expr = []
     ops = ['+', '-', '/', '%', '*', '^', '(', ')']
-    i = 0
     length = len(func_string)
+    i = 0
+    if func_string[0] == '-':
+        i = 1
+        nb = '-'
+        if func_string[1].isdigit():
+            while i < length and func_string[i].isdigit():
+                nb += func_string[i]
+                i +=1
+            expr.append(nb)
+        elif func_string[1].isalpha():
+            nb += "1"
+            var = ""
+            while i < length and func_string[i].isalpha():
+                var += func_string[i]
+                i +=1
+            expr += [nb, '*', var]
+        else:
+            errors.operator('-')
+            return None
     while i < length:
         if func_string[i] == ' ':
             i += 1

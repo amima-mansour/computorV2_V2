@@ -38,5 +38,4 @@ if __name__ == "__main__":
                         mat.comatrice()
         else:
             p.parsing(string)
-            print(p.functions)
         string = input()

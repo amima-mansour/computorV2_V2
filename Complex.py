@@ -71,6 +71,8 @@ class Complex:
 
     def str_comp(self):
         string =""
+        if self.x == self.y and self.y == 0:
+            return "0"
         if self.x != 0:
             string += str(self.x)
         y = self.y

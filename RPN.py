@@ -1,5 +1,3 @@
-#!/usr/bin/Python3.4
-
 from sys import argv as av
 from collections import namedtuple
 import errors
@@ -97,18 +95,3 @@ def shunting(tokenvals):
         v = note = ''
     return table
  
-if __name__ == '__main__':
-    infix = '5 + 6 * 3 / i + var + (10 / 2 * 4) / 10'
-    #infix = 'A + A'
-    if len(av) > 1:
-        infix = av[1]
-    #print( 'For infix expression: %r\n' % infix )
-    rp = shunting(infix)
-    #maxcolwidths = [len(max(x, key=len)) for x in zip(*rp)]
-    #row = rp[0]
-    #print( ' '.join('{cell:^{width}}'.format(width=width, cell=cell) for (width, cell) in zip(maxcolwidths, row)))
-    #for row in rp[1:]:
-    #    print( ' '.join('{cell:<{width}}'.format(width=width, cell=cell) for (width, cell) in zip(maxcolwidths, row)))
-
-    print('The infix output RPN is: %r' % infix)
-    print('The final output RPN is: %r' % rp[-1][2])

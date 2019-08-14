@@ -1,4 +1,3 @@
-#!/usr/bin/Python3.4
 
 import errors
 import Complex as comp
@@ -12,7 +11,6 @@ def eval_postfix(expr):
             b = stack.pop()
             if len(stack) == 0 and token == '-':
                 a = comp.Complex(0)
-                #a rajouter une erreur
             else:
                 a = stack.pop()
             if not isinstance(b, comp.Complex):
@@ -40,9 +38,9 @@ def eval_postfix(expr):
     c = stack.pop()
     if not isinstance(c, comp.Complex):
         c = comp.Complex(c)
-    if int(c.y):
+    if int(c.y) == c.y:
         c.y = int(c.y)
-    if int(c.x):
+    if int(c.x) == c.x:
         c.x = int(c.x)
     return c
 

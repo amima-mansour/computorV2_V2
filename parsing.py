@@ -39,7 +39,7 @@ class Inputs:
                     if m1:
                         if var_name != '?':
                             self.matrixs[var_name.lower()] = m1
-                        print(m1.str_matrix())
+                        print(m1.str_matrix("\n"))
             else:
                 value = self.check_expr(var_value, "")
                 if not value:
@@ -62,12 +62,18 @@ class Inputs:
                     if m1:
                         if var_name != '?':
                             self.matrixs[var_name.lower()] = m1
-                        print(m1.str_matrix())
+                        print(m1.str_matrix("\n"))
         elif '(' in var_name:
             if var_name.count(')') != 1 or var_name.count(')') != 1:
                 errors.function_name(var_name)
                 return
             func_name, unknown = check.check_function_name(var_name)
+            char = ''
+            while var_value[-1] == ' ':
+                var_value = var_value[:-1]
+            if var_value[-1] == '?':
+                char = '?'
+                var_value = var_value[:-1]
             func_expr = func_tools.format(var_value)
             if not func_expr:
                 return
@@ -78,9 +84,15 @@ class Inputs:
             if '**' in func_expr:
                 errors.operator('**')
                 return
-            f = func.Function(func_name, unknown, func_expr)
-            self.functions[func_name] = f
-            f.print_function()
+            if char == '?':
+                if func_name.lower() not in self.functions:
+                    errors.function(func_name)
+                    return
+                self.functions[func_name.lower()].resolve(func_expr)
+            else:
+                f = func.Function(func_name, unknown, func_expr)
+                self.functions[func_name.lower()] = f
+                f.print_function()
         else:
             errors.var_name(var_name)
 
@@ -98,7 +110,7 @@ class Inputs:
         if not value:
             return None
         return var_list
-    
+
     def check_expr(self, string, ignore):
         string = string.replace(" ", "")
         value, var_list = check.check_string(string)
@@ -230,7 +242,7 @@ class Inputs:
                                 nb = var.str_comp()
                             p = f.evaluate_func(nb)
                             char = '+'
-                            if var.y < 0:
+                            if p.y < 0:
                                 char = '-'
                             p = [str(p.x), char, str(p.y), '*', 'i']
                             final_expr += p
@@ -247,10 +259,18 @@ class Inputs:
                         errors.unknown_variable(var)
                         return None
                 else:
-                    if len(final_expr) >= 1 and final_expr[-1] not in "*+/%^":
+                    if len(final_expr) >= 1 and final_expr[-1] not in "*+/%^-":
                         final_expr += '*'
                     p = self.variables[var.lower()]
-                    final_expr += ['(', str(p.x), '+', str(p.y), '*', 'i', ')']
+                    if p.x == 0 or p.y == 0:
+                        if p.x == 0 and p.y == 0:
+                            final_expr.append('0')
+                        elif p.x == 0:
+                            final_expr += [str(p.y), '*', 'i']
+                        else:
+                            final_expr.append(str(p.x))
+                    else:
+                        final_expr += ['(', str(p.x), '+', str(p.y), '*', 'i', ')']
             elif expr[i] == '[':
                 index = func_tools.index_char("".join(expr[i + 1:]), '[', ']') + i + 1
                 m = self.check_matrix("".join(expr[i:index + 1]))
@@ -303,7 +323,6 @@ class Inputs:
                 b = rpn_eval.eval_postfix(rp[-1][2].split())
                 index_3 = i + 1
             else:
-                print("renter")
                 b = comp.Complex(calc_list[index + 1])
             if op == '**':
                 if not A or not B:
@@ -333,7 +352,6 @@ class Inputs:
             del calc_list[index_2:index]
             calc_list[index_2 - 1] = tmp
             del calc_list[index_2:index_3]
-            print("calc list after delete = {}".format(calc_list))
         return calc_list
     
     def matrix_calculation(self, calc_list):

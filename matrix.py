@@ -74,8 +74,11 @@ class Matrix:
                 return -1
         return col
 
-    def str_matrix(self):
-        string = ""
+    def str_matrix(self, char):
+        if char == "":
+            string = "["
+        else:
+            string = ""
         for i, element in enumerate(self.mat):
             string += '[ '
             for key, e in enumerate(element):
@@ -84,7 +87,11 @@ class Matrix:
                     string += ', '
             string += ']'
             if i < len(self.mat) - 1:
-                string += "\n"
+                string += char
+                if char == "":
+                    string += ";"
+        if char == "":
+            string += "]"
         return string
 
     # fonction qui permet de verifier que si une matrice est carree

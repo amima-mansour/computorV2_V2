@@ -42,39 +42,9 @@ def equation_parameter(equation, unknown):
     c += nb.x
     return a, b, c
 
-def polynom_degree(equation, unknown):
-
-    degree, index, length = 0, 0, len(equation)
-
-    while index < length:
-        if equation[index] == '^':
-            nbr = cal.convert_str_nbr(equation[index + 1])
-            if degree < nbr:
-                degree = nbr
-            index += 2
-        elif equation[index] == unknown and (index + 1 < length and equation[index + 1] != '^' or index + 1 == length):
-            nbr = 1
-            if degree < nbr:
-                degree = nbr
-            index += 1
-        else:
-            index += 1
-    return degree
-
 # resolution
 def resolve(equation, unknown):
 
-    tmp_equation = equation
-    if 'i' in equation:
-        errors.cant()
-        return
-    while '(' in tmp_equation:
-        index_open = tmp_equation.index('(')
-        index_closed = func_tools.index_char(tmp_equation[index_open + 1:], '(', ')') + index_open
-        if unknown in tmp_equation[index_open:index_closed]:
-            errors.cant()
-            return
-        del tmp_equation[index_open:index_closed + 1]
     d = polynom_degree(equation, unknown)
     if d == 0:
         print("The solution is:\nAll real numbers")

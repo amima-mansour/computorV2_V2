@@ -25,6 +25,9 @@ def operator(c):
 def unknown_variable(var):
     print(colors.red + "ERROR: This variable "+ var + " is not identified!" + colors.normal)
 
+def function(var):
+    print(colors.red + "ERROR: This function "+ var + " is not identified!" + colors.normal)
+
 def wrong_element(msg):
     print(colors.red + "This element " + msg + " is not identified!" + colors.normal)
 

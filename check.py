@@ -20,18 +20,29 @@ def brackets(s, pushChar, popChar):
                 stack.pop()
     return stack == []
 
+def check_negative(string):
+    j = 1
+    while j < len(string):
+        if not string[j].isdigit():
+                return False
+        j += 1
+    return True
+
 def check_string(string):
 
     ops = ['+', '-', '/', '%', '*', '^', ')', '(']
     ops_2 = ['+', '-', '/', '%', '*', '^','+']
     if not brackets(string, '(', ')'):
         return False, []
-    #string = string.replace(" ", "")
     l =[]
     i = 0
     length = len(string)
     while i < length:
         if isinstance(string[i], mat.Matrix):
+            l.append(string[i])
+        elif string[i][0] == '-':
+            if check_negative(string[i]) == False:
+                return False, l
             l.append(string[i])
         elif string[i].isdigit():
             nb = ""
