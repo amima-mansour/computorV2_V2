@@ -317,9 +317,12 @@ class Inputs:
                 a = rpn_eval.eval_postfix(rp[-1][2].split())
                 if not a:
                     return None
-                index_2 = i
+                index_2 = i + 1
             else:
-                a = comp.Complex(calc_list[index - 1])
+                if not isinstance(calc_list[index - 1], comp.Complex):
+                    a = comp.Complex(calc_list[index - 1])
+                else:
+                    a = calc_list[index - 1]
             if isinstance(calc_list[index + 1], list):
                 B = mat.Matrix(calc_list[index + 1])
             elif isinstance(calc_list[index + 1], mat.Matrix):
@@ -339,7 +342,10 @@ class Inputs:
                     return None
                 index_3 = i + 1
             else:
-                b = comp.Complex(calc_list[index + 1])
+                if not isinstance(calc_list[index + 1], comp.Complex):
+                    b = comp.Complex(calc_list[index + 1])
+                else:
+                    b = calc_list[i + 1]
             if op == '**':
                 if not A or not B:
                     tmp = None
@@ -353,7 +359,6 @@ class Inputs:
                 else:
                     a.multiplication_2_complex(b)
                     tmp = a
-                    print("tmp = {}".format(tmp))
             elif op == '+':
                 if not A or not B:
                     tmp = None
@@ -366,14 +371,12 @@ class Inputs:
                     tmp = A.substruction(B)
             if tmp is None:
                 return None
-            del calc_list[index_2 - 1:index]
-            calc_list[index_2 - 1] = tmp
-            del calc_list[index_2:index_3]
-            print(cal_list)
+            calc_list[index + 1] = tmp
+            del calc_list[index + 2:index_3]
+            del calc_list[index_2 - 1:index + 1]
         return calc_list
-    
+
     def matrix_calculation(self, calc_list):
-    
         calc_list = self.matrix_elementary_calculation(calc_list, '**')
         if not calc_list:
             return None
