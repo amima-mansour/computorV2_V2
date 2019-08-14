@@ -79,7 +79,7 @@ def check_string(string):
                 else:
                     errors.operator(string[i + 1])
                     return False, l
-            if i + 1 < length and string[i] == ')' and string[i + 1] not in ops_2:
+            if i + 1 < length and string[i] == ')' and string[i + 1] not in ops_2 and string[i + 1] != ')':
                 errors.operator(string[i + 1])
                 return False, l
             if i + 1 < length and string[i] == '(' and string[i + 1] in ops and string[i + 1] != '-':

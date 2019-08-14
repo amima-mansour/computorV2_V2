@@ -251,6 +251,8 @@ class Inputs:
                                     return None
                                 nb = var.str_comp()
                             p = f.evaluate_func(nb)
+                            if not p:
+                                return one
                             char = '+'
                             if p.y < 0:
                                 char = '-'
