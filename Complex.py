@@ -23,11 +23,15 @@ class Complex:
         self.x *= nbr
         self.y *= nbr
 
-    def multiplication_2_complex(self, comp):
+    def multiplication_2_complex(self, comp=None, x_2=0, y_2=0):
+        if comp is not None:
+            x_1 = comp.x
+            y_1 = comp.y
+        else:
+            x_1 = x_2
+            y_1 = y_2
         x = self.x
         y = self.y
-        x_1 = comp.x
-        y_1 = comp.y
         self.x = x * x_1 - y * y_1 
         self.y = x * y_1 + y * x_1 
 
@@ -37,8 +41,10 @@ class Complex:
             self.y = 0
             self.x = 1
             return
+        x = self.x
+        y = self.y
         while i <= nbr:
-            self.multiplication_2_complex(self)
+            self.multiplication_2_complex(None, x, y)
             i += 1
 
     def addition(self, comp):
@@ -64,10 +70,12 @@ class Complex:
     def division_2_complex(self, comp):
         if comp.x == 0 and comp.y == 0:
             errors.zero_division()
+            return False
         mod = comp.module()
         conj = comp.conjugate()
         self.multiplication_2_complex(conj)
         self.division_real(mod)
+        return True
 
     def str_comp(self):
         string =""

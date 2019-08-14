@@ -42,7 +42,9 @@ class Inputs:
                         print(m1.str_matrix("\n"))
             else:
                 value = self.check_expr(var_value, "")
-                if not value:
+                if value and value[-1] == '-':
+                    errors.operator('-')
+                if not value or value[-1] == '-':
                     return
                 a = False
                 for el in value:
@@ -54,6 +56,8 @@ class Inputs:
                     if not rp:
                         return
                     var = rpn_eval.eval_postfix(rp[-1][2].split())
+                    if not var:
+                        return
                     if var_name != '?':
                         self.variables[var_name.lower()] = var
                     print(var.str_comp())
@@ -193,6 +197,8 @@ class Inputs:
                     if not rp:
                         return None
                     var = rpn_eval.eval_postfix(rp[-1][2].split())
+                    if not var:
+                        return None
                     l.append(var)
                     i = comma + 1
                 last_matrix = self.check_expr(string[i:brakets], "")
@@ -200,6 +206,8 @@ class Inputs:
                 if not rp:
                     return None
                 var = rpn_eval.eval_postfix(rp[-1][2].split())
+                if not var:
+                    return None
                 l.append(var)
                 string_list.append(l)
             i = brakets + 1
@@ -239,6 +247,8 @@ class Inputs:
                                 if not rp:
                                     return
                                 var = rpn_eval.eval_postfix(rp[-1][2].split())
+                                if not var:
+                                    return None
                                 nb = var.str_comp()
                             p = f.evaluate_func(nb)
                             char = '+'
@@ -250,7 +260,7 @@ class Inputs:
                         else:
                             errors.unknown_variable(var)
                     elif var.lower() == ignore or var.lower() == 'i':
-                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix) and final_expr[-1].isdigit():
+                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix) and final_expr[-1].isdigit() or '.' in final_expr[-1]:
                             final_expr += '*'
                         final_expr.append(expr[i])
                     elif var.lower() in self.matrixs:
@@ -266,7 +276,7 @@ class Inputs:
                         if p.x == 0 and p.y == 0:
                             final_expr.append('0')
                         elif p.x == 0:
-                            final_expr += [str(p.y), '*', 'i']
+                            final_expr += ['(',str(p.y), '*', 'i',')']
                         else:
                             final_expr.append(str(p.x))
                     else:
@@ -303,6 +313,8 @@ class Inputs:
                 if not rp:
                     return None
                 a = rpn_eval.eval_postfix(rp[-1][2].split())
+                if not a:
+                    return None
                 index_2 = i
             else:
                 a = comp.Complex(calc_list[index - 1])
@@ -321,6 +333,8 @@ class Inputs:
                 if not rp:
                     return None
                 b = rpn_eval.eval_postfix(rp[-1][2].split())
+                if not b:
+                    return None
                 index_3 = i + 1
             else:
                 b = comp.Complex(calc_list[index + 1])

@@ -31,6 +31,10 @@ def function(var):
 def wrong_element(msg):
     print(colors.red + "This element " + msg + " is not identified!" + colors.normal)
 
+def number():
+    print(colors.red + "Number is not well formated!" + colors.normal)
+
+
 def error_matrix():
     print(colors.red + "This matrix is not well formated!" + colors.normal)
 

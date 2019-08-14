@@ -105,7 +105,7 @@ class Matrix:
         M = [[0 for j in range(self.col)] for i in range(self.row)]
         for i in range(self.row):
             for j in range(self.col):
-                c = Comp.Complex(0)
+                c = comp.Complex(0)
                 c.x = self.mat[i][j].x
                 c.y = self.mat[i][j].y
                 c.addition(M2.mat[i][j])
@@ -119,7 +119,7 @@ class Matrix:
         M=[[0 for j in range(self.col)] for i in range(self.row)]
         for i in range(self.row):
             for j in range(self.col):
-               c = Comp.Complex(0)
+               c = comp.Complex(0)
                c.x = self.mat[i][j].x
                c.y = self.mat[i][j].y
                c.substruction(M2.mat[i][j])
@@ -136,7 +136,7 @@ class Matrix:
         for i in range(n1):
             for j in range(m1):
                 for k in range(self.col):
-                    c = Comp.Complex(0)
+                    c = comp.Complex(0)
                     c.x = self.mat[i][j].x
                     c.y = self.mat[i][j].y
                     c.multiplication_2_complex(M2.mat[i][j])

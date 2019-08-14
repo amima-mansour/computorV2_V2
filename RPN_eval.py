@@ -8,6 +8,9 @@ def eval_postfix(expr):
     stack = []
     for key, token in enumerate(expr):
         if token in ops:
+            if len(stack) == 0:
+                errors.number()
+                return None
             b = stack.pop()
             if len(stack) == 0 and token == '-':
                 a = comp.Complex(0)
@@ -27,7 +30,9 @@ def eval_postfix(expr):
             elif token == "^":
                 c.power(b.x)
             elif token == "/":
-                c.division_2_complex(b)
+                value = c.division_2_complex(b)
+                if not value:
+                    return None
             elif token == '%':
                 c.modulo(b.x)
             else:
