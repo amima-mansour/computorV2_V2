@@ -4,8 +4,10 @@ from sys import exit
 import colors
 
 def usage():
-    print("Usage : " + colors.red + "./Expert_system.py" + colors.blue + " [-di]" \
-            + colors.green + " file.txt" + colors.normal)
+    print("Inputs :\n" + colors.red + "Name of variable:" + colors.green + " var = expression\n"+  \
+          colors.red + "Name of function:" + colors.green + " f(x) = expression\n"+  \
+          colors.red + "Name of matrix:"+ colors.green + " M = expression\n"+  \
+          colors.red + "Use ? to know the value of an expression:" + colors.green + " a + b + 2 = ?" + colors.normal)
 
 def zero_division():
     print(colors.red + "ERROR: Zero Division" + colors.normal)
