@@ -351,7 +351,9 @@ class Inputs:
                 elif B:
                     tmp = B.multiplication_comp(a)
                 else:
-                    tmp  = a.multiplication_2_complex(b)
+                    a.multiplication_2_complex(b)
+                    tmp = a
+                    print("tmp = {}".format(tmp))
             elif op == '+':
                 if not A or not B:
                     tmp = None
@@ -364,10 +366,10 @@ class Inputs:
                     tmp = A.substruction(B)
             if tmp is None:
                 return None
-            
-            del calc_list[index_2:index]
+            del calc_list[index_2 - 1:index]
             calc_list[index_2 - 1] = tmp
             del calc_list[index_2:index_3]
+            print(cal_list)
         return calc_list
     
     def matrix_calculation(self, calc_list):

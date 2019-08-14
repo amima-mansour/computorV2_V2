@@ -1,4 +1,3 @@
-#!/usr/bin/Python3.4
 import errors
 
 class Complex:
@@ -33,7 +32,7 @@ class Complex:
         x = self.x
         y = self.y
         self.x = x * x_1 - y * y_1 
-        self.y = x * y_1 + y * x_1 
+        self.y = x * y_1 + y * x_1
 
     def power(self, nbr):
         i = 2
@@ -82,6 +81,8 @@ class Complex:
         if self.x == self.y and self.y == 0:
             return "0"
         if self.x != 0:
+            if int(self.x) == self.x:
+                self.x = int(self.x)
             string += str(self.x)
         y = self.y
         if y != 0:
@@ -95,6 +96,8 @@ class Complex:
                 if self.x != 0:
                     string += " + "
             if y > 1:
+                if int(y) == y:
+                    y = int(y)
                 string += str(y)
             string += 'i'
         return string
