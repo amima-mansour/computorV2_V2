@@ -310,7 +310,7 @@ class Inputs:
                         errors.unknown_variable(var)
                         return None
                 else:
-                    if len(final_expr) >= 1 and final_expr[-1] not in "*+/%^-":
+                    if len(final_expr) >= 1 and final_expr[-1] not in "*+/%^-(":
                         final_expr += '*'
                     p = self.variables[var.lower()]
                     if p.x == 0 or p.y == 0:

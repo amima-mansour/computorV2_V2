@@ -77,13 +77,17 @@ class Complex:
         return True
 
     def str_comp(self):
-        string =""
+        string = ""
         if self.x == self.y and self.y == 0:
             return "0"
         if self.x != 0:
             if int(self.x) == self.x:
                 self.x = int(self.x)
-            string += str(self.x)
+            char = ""
+            if self.x < 0:
+                char = '-'
+                self.x *= -1
+            string = char + str(self.x)
         y = self.y
         if y != 0:
             if y < 0:

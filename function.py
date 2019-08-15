@@ -36,7 +36,7 @@ class Function:
                 string += el.str_matrix("")
             else:
                 string += el
-            if i < len(self.expr) - 1:
+            if not (i == 0 and el == '-') and i < len(self.expr) - 1:
                 string += " "
         print(string)
 
