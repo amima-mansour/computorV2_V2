@@ -7,7 +7,9 @@ def usage():
     print(colors.blue + "Inputs :\n" + colors.red + "Name of variable:" + colors.green + " var = expression\n"+  \
           colors.red + "Name of function:" + colors.green + " f(x) = expression\n"+  \
           colors.red + "Name of matrix:"+ colors.green + " M = expression\n"+  \
-          colors.red + "Use ? to know the value of an expression:" + colors.green + " a + b + 2 = ?" + colors.normal)
+          colors.red + "Use ? to know the value of an expression:" + colors.green + " a + b + 2 = ?\n"+  \
+          colors.red + "Press matrix to get bonus\n"+  \
+          colors.red + "Press exit to quit program"+ colors.normal)
 
 def zero_division():
     print(colors.red + "ERROR: Zero Division" + colors.normal)
