@@ -147,15 +147,15 @@ class Matrix:
             return None
         n1 = self.row
         m1 = M2.col
-        M =[[0 for j in range(m1)] for i in range(n1)]#creer une matrice nxn pleine de zéro
+        M =[[comp.Complex(0) for j in range(m1)] for i in range(n1)]#creer une matrice nxn pleine de zéro
         for i in range(n1):
             for j in range(m1):
                 for k in range(self.col):
                     c = comp.Complex(0)
-                    c.x = self.mat[i][j].x
-                    c.y = self.mat[i][j].y
-                    c.multiplication_2_complex(M2.mat[i][j])
-                    M[i][j] = c
+                    c.x = self.mat[i][k].x
+                    c.y = self.mat[i][k].y
+                    c.multiplication_2_complex(M2.mat[k][j])
+                    M[i][j].addition(c)
         return Matrix(M)
 
     # fonction qui permet de faire la multiplication d'une matrice par un reel
