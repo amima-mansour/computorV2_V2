@@ -83,23 +83,41 @@ class Inputs:
             if var_value[-1] == '?':
                 char = '?'
                 var_value = var_value[:-1]
-            func_expr = func_tools.format(var_value)
+            if len(var_value) > 0:
+                func_expr = func_tools.format(var_value)
+            else:
+                func_expr = []
             if not func_expr:
                 return
-            func_expr = self.replace_var(func_expr, unknown)
+            if len(func_expr) > 0:
+                func_expr = self.replace_var(func_expr, unknown)
             if not func_expr:
                 return
-            func_expr = self.check_function_expr(func_expr, unknown, var_name)
+            if len(func_expr) > 0:
+                func_expr = self.check_function_expr(func_expr, unknown, var_name)
             if not func_expr:
                 return
             if '**' in func_expr:
                 errors.operator('**')
                 return
-            if char == '?':
+            if unknown not in func_expr:
+                rp = rpn.shunting(func_expr)
+                if not rp:
+                    return
+                func_expr_2 = rpn_eval.eval_postfix(rp[-1][2].split())
+                if not func_expr_2:
+                    return
+                func_expr = func_expr_2.str_comp()
+            if char == '?' and len(func_expr) > 0:
                 if func_name.lower() not in self.functions:
                     errors.function(func_name)
                     return
                 self.functions[func_name.lower()].resolve(func_expr)
+            elif char == '?' and len(func_expr) == 0:
+                if func_name.lower() not in self.functions:
+                    errors.function(func_name)
+                    return
+                self.functions[func_name.lower()].print_function()
             else:
                 f = func.Function(func_name, unknown, func_expr)
                 self.functions[func_name.lower()] = f
