@@ -152,11 +152,16 @@ class Inputs:
                 if len(tmp_expr) < 2:
                     errors.error_check_matrix()
                     return None
-                value, check_expr = check.check_string(tmp_expr[:-1])
+                if len(tmp_expr) > 2 and tmp_expr[-1] == '*' and tmp_expr[-2] == '*':
+                    value, check_expr = check.check_string(tmp_expr)
+                    tmp_expr = tmp_expr.replace(tmp_expr[-2:], "")
+                else:
+                    value, check_expr = check.check_string(tmp_expr[:-1])
                 if not value:
                     return None
                 expr += check_expr
-                expr.append(tmp_expr[-1])
+                if len(tmp_expr) > 0 and tmp_expr[-1] in '+*-':
+                    expr.append(tmp_expr[-1])
             expr.append(matrix_expr)
             if len(string) > (index_2 + 1):
                 while index_2 + 1 < len(string) and string[index_2 + 1] == ' ':
