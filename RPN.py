@@ -56,9 +56,9 @@ def shunting(tokenvals):
                             stack.pop()
                             action = '(Pop op)'
                             outq.append(t2)
-                        else:    
+                        else:
                             break
-                    else:        
+                    else:
                         if t2 != LPAREN:
                             stack.pop()
                             action = '(Pop op)'

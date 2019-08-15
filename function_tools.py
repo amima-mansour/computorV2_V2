@@ -1,6 +1,6 @@
 import errors
 
-# # find the index of closed brackets : char2
+# find the index of closed brackets : char2
 def index_char(func_list, char1, char2):
 
     i = 0

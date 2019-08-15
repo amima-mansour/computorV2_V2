@@ -35,6 +35,8 @@ class Inputs:
                 m = self.check_expr_matrix(var_value)
                 if m:
                     m = self.replace_var(m, "")
+                    if not m:
+                        return
                     m1 = self.matrix_calculation(m)
                     if m1:
                         if var_name != '?':
@@ -85,6 +87,8 @@ class Inputs:
             if not func_expr:
                 return
             func_expr = self.replace_var(func_expr, unknown)
+            if not func_expr:
+                return
             func_expr = self.check_function_expr(func_expr, unknown, var_name)
             if not func_expr:
                 return
@@ -221,6 +225,11 @@ class Inputs:
         if string[-1] != ']' or string[-2] != ']':
             errors.error_matrix()
             return None
+        length = len(string_list[0])
+        for el in string_list:
+            if len(el) != length:
+                errors.error_matrix()
+                return None
         return string_list
 
     def replace_var(self, expr, ignore):
@@ -265,7 +274,8 @@ class Inputs:
                         else:
                             errors.unknown_variable(var)
                     elif var.lower() == ignore or var.lower() == 'i':
-                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix) and (final_expr[-1].isdigit() or '.' in final_expr[-1]):
+                        if len(final_expr) >= 1 and not isinstance(final_expr[-1], mat.Matrix)  \
+                                and (final_expr[-1].isdigit() or '.' in final_expr[-1]):
                             final_expr += '*'
                         final_expr.append(expr[i])
                     elif var.lower() in self.matrixs:

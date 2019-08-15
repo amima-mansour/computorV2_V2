@@ -43,7 +43,9 @@ class Function:
     def resolve(self, expr):
         equation = self.expr
         length, i, dic, dic[0] = len(expr), 0, {}, 0
-        if 'i' in equation or 'i' in expr or not check_expr(equation, self.unknown) or not check_expr(expr, self.unknown) or not check_matrix(equation) or not check_matrix(expr):
+        if 'i' in equation or 'i' in expr or not check_expr(equation, self.unknown)  \
+                or not check_expr(expr, self.unknown) or not check_matrix(equation)  \
+                or not check_matrix(expr):
             errors.cant()
             return
         simplify_func(equation, self.unknown, dic, 1)

@@ -24,7 +24,7 @@ if __name__ == "__main__":
                     if m.isalpha():
                         mat = p.matrix[m]
                     else:
-                        mat = check.check_matrix(m)
+                        mat = p.check_matrix(m)
                     if not mat:
                         continue
                     mat = cal.matrix_calculation()
