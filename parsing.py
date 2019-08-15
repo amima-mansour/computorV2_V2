@@ -222,6 +222,9 @@ class Inputs:
                     return None
                 l.append(var)
                 string_list.append(l)
+            else:
+                errors.error_matrix()
+                return None
             i = brakets + 1
             if i < length - 1 and string[i] != ';':
                 errors.error_matrix()

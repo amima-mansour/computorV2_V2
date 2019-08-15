@@ -2,6 +2,7 @@
 
 import parsing
 import check
+import errors
 import calculation_tools as cal
 
 if __name__ == "__main__":
@@ -21,21 +22,30 @@ if __name__ == "__main__":
                 else:
                     print('Put your Matrix')
                     m = input()
+                    if not m or (m.isalpha() and m.lower() not in p.matrixs):
+                        errors.unknown_variable(m)
+                        continue
                     if m.isalpha():
-                        mat = p.matrix[m]
+                        mat = p.matrixs[m]
                     else:
-                        mat = p.check_matrix(m)
+                        mat = p.check_expr_matrix(m)
                     if not mat:
                         continue
-                    mat = cal.matrix_calculation()
+                    mat = p.matrix_calculation(mat)
                     if func == "det":
                         mat.determinant()
+                        if mat.det:
+                            print(mat.det)
                     elif func == "inv":
-                        mat.inverse()
+                        m = mat.inverse()
+                        if m:
+                            print(m.str_matrix('\n'))
                     elif func == "trans":
-                        mat.transpose()
+                        m = mat.transpose()
+                        print(m.str_matrix('\n'))
                     else:
-                        mat.comatrice()
+                        m = mat.comatrice()
+                        print(m.str_matrix('\n'))
         else:
             p.parsing(string)
         string = input()

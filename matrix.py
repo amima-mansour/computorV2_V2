@@ -44,17 +44,17 @@ def dimensions_multiplication(M1, M2):
 
 # fonction qui permet de determiner le determinant de la matrice
 def determinant_2(M):
-    return M[0][0] * M[1][1] - M[0][1] * M[1][0]
+    return M[0][0].x * M[1][1].x - M[0][1].x * M[1][0].x
 
 def determinant_matrix(M):
     if M.row == 1:
-        return M.mat[0][0]
+        return M.mat[0][0].x
     if M.row == 2:
         return determinant_2(M.mat)
     det = 0
     coeff = 1
     for i in range(n):
-        det += coeff * cal.convert_str_nbr(M.mat[i][0]) * determinant_matrix(M.extract(M.mat, i , 0))
+        det += coeff * cal.convert_str_nbr(M.mat[i][0]).x * determinant_matrix(M.extract(M.mat, i , 0))
         coeff *= -1
     return det 
 
@@ -190,12 +190,12 @@ class Matrix:
 
     # fonction qui permet de determiner le determinant de la matrice
     def determinant(self):
-        if det is None:
+        if self.det is None:
             if not self.square_matrix():
                 errors.determinant_matrix("This is not a square matrix")
                 return None
             self.det = determinant_matrix(self)
-            return self.det
+        return self.det
 
     # fonction qui permet de determiner la comatrice
     def comatrice(self):
@@ -203,15 +203,15 @@ class Matrix:
         for i in range(self.row):
             for j in range(self.col):
                 coeff = (-1) ** (i + j)
-                comM[i][j] = coeff * determinant_matrice(extraire_matrice(M, i, j))
-        return comM
+                comM[i][j] = coeff * determinant_matrix(self.extract(i, j))
+        return Matrix(comM)
 
     # fonction qui permet de determiner la transpose d'une matrice
     def transpose(self):
         transM =[[0 for j in range(self.row)] for i in range(self.col)]#creer une matrice nxn pleine de zéro
         for i in range(self.col):
             for j in range(self.row):
-                transM[i][j] = self.mat[j][i]
+                transM[i][j] = self.mat[j][i].x
         return Matrix(transM)
 
     # fonction qui permet d'inverser une matrice
@@ -223,6 +223,7 @@ class Matrix:
         if self.det != 0:
             m1 = self.comatrice()
             m1 = m1.transpose()
-            return m1.multiplication_real(1 / self.det)
+            m1.multiplication_comp(1 / self.det)
+            return m1
         errors.determinant_matrix("This matrix is not inversible")
         return None
