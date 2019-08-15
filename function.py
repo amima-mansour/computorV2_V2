@@ -31,13 +31,26 @@ class Function:
 
     def print_function(self):
         string = ""
-        for i, el in enumerate(self.expr):
-            if isinstance(el, mat.Matrix):
-                string += el.str_matrix("")
+        i, length = 0, len(self.expr)
+        while i < length:
+            if isinstance(self.expr, mat.Matrix):
+                string += self.expr.str_matrix("")
+            elif self.expr[i].isdigit():
+                while i < length and self.expr[i].isdigit():
+                    string += self.expr[i]
+                    i += 1
+                if i < length and self.expr[i] == '.':
+                    string += '.'
+                    i += 1
+                    while i < length and self.expr[i].isidigit():
+                        string += self.expr[i]
+                        i += 1
+                i -= 1
             else:
-                string += el
-            if not (i == 0 and el == '-') and i < len(self.expr) - 1:
+                string += self.expr[i]
+            if not (i == 0 and self.expr == '-') and i < len(self.expr) - 1:
                 string += " "
+            i += 1
         print(string)
 
     def resolve(self, expr):
