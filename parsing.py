@@ -317,7 +317,7 @@ class Inputs:
                         if p.x == 0 and p.y == 0:
                             final_expr.append('0')
                         elif p.x == 0:
-                            final_expr += ['(',str(p.y), '*', 'i',')']
+                            final_expr += ['(', str(p.y), '*', 'i', ')']
                         else:
                             final_expr.append(str(p.x))
                     else:

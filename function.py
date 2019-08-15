@@ -48,7 +48,8 @@ class Function:
                 i -= 1
             else:
                 string += self.expr[i]
-            if not (i == 0 and self.expr == '-') and i < len(self.expr) - 1:
+            if not (i == 0 and self.expr == '-') and i < len(self.expr) - 1   \
+                    and (self.expr[i + 1] != 'i' or self.expr[i] in "+-/*%"):
                 string += " "
             i += 1
         print(string)
